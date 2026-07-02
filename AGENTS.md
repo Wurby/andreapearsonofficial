@@ -127,7 +127,7 @@ Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a sep
 
 ## Current Phase
 
-Design work is mostly complete (key gaps: logo asset awaiting Andrea, OG meta tags, footer polish). See `TODOS.md` for the numbered phase list and current progress — Phases 1–2 (Admin Panel Polish, Work With Me Content Rebuild) are implemented and pending Joshua's visual review; Phase 3 (Google Analytics) is live in production, awaiting real traffic to populate the Dashboard's charts. Phase 4 (A/B Testing) is next.
+Design work is mostly complete (key gaps: logo asset awaiting Andrea, OG meta tags, footer polish). See `TODOS.md` for the numbered phase list and current progress — Phases 1–2 (Admin Panel Polish, Work With Me Content Rebuild) are implemented and pending Joshua's visual review; Phase 3 (Google Analytics) is live in production, awaiting real traffic to populate the Dashboard's charts. Phase 4 (Podcast Feature) is next — scope not yet defined.
 
 **Design decisions are locked** — see `design-doc.md` for the full specification. Update it whenever a design decision changes.
 

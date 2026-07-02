@@ -106,7 +106,13 @@ Explicitly out of scope for this phase: cookie consent banner, Firestore view/cl
 
 ---
 
-## Phase 4 — A/B Testing
+## Phase 4 — Podcast Feature (Homepage)
+
+Andrea wants something on the homepage for her podcast ("The Show" — theandreapearsonshow.com, currently just an external footer link in `Footer.jsx`). Scope, placement, and content model (episode list? latest-episode embed? just a promo banner?) not yet decided — figure out in detail when we get here.
+
+---
+
+## Phase 5 — A/B Testing
 
 - [ ] Add Variant B fields to `AdminContent.jsx` for headline, intro, and hero CTA text
 - [ ] `useVariant` hook — assigns `'a'` or `'b'` randomly on first visit, persists to `localStorage`
@@ -117,7 +123,7 @@ Explicitly out of scope for this phase: cookie consent banner, Firestore view/cl
 
 ---
 
-## Phase 5 — Pre-Launch Polish
+## Phase 6 — Pre-Launch Polish
 
 - [ ] OG image / social share meta tags
 - [ ] Accessibility pass (alt text, focus states, contrast)
@@ -125,7 +131,7 @@ Explicitly out of scope for this phase: cookie consent banner, Firestore view/cl
 
 ---
 
-## Phase 6 — Delivery
+## Phase 7 — Delivery
 
 - [ ] Tighten Firestore write rules to admin UID
 - [ ] Custom domain + SSL — add andreapearsonofficial.com in Firebase Hosting console

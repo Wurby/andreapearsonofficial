@@ -18,6 +18,10 @@ export default function AdminSeries() {
   const [addingGenre, setAddingGenre]   = useState(false)
   const [newGenreName, setNewGenreName] = useState('')
 
+  const [editingId, setEditingId]   = useState(null)
+  const [editName, setEditName]     = useState('')
+  const [savingEdit, setSavingEdit] = useState(false)
+
   async function handleAdd(e) {
     e.preventDefault()
     if (!newName.trim()) return
@@ -47,6 +51,29 @@ export default function AdminSeries() {
     await deleteDoc(doc(db, 'series', id))
   }
 
+  function startEdit(s) {
+    setEditingId(s.id)
+    setEditName(s.name)
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setEditName('')
+  }
+
+  async function handleSaveEdit(id) {
+    const name = editName.trim()
+    if (!name) return
+    setSavingEdit(true)
+    try {
+      await setDoc(doc(db, 'series', id), { name }, { merge: true })
+      setEditingId(null)
+      setEditName('')
+    } finally {
+      setSavingEdit(false)
+    }
+  }
+
   if (loading) return <div className="text-gray-400">Loading…</div>
 
   const grouped = {}
@@ -69,17 +96,58 @@ export default function AdminSeries() {
           </h2>
           <div className="bg-white rounded border divide-y">
             {items.map(s => (
-              <div key={s.id} className="flex items-center justify-between px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-onyx">{s.name}</p>
-                  <p className="text-xs text-gray-400">{s.id}</p>
-                </div>
-                <button
-                  onClick={() => handleDelete(s.id, s.name)}
-                  className="text-sm text-blood-red hover:underline"
-                >
-                  Delete
-                </button>
+              <div key={s.id} className="flex items-center justify-between px-4 py-3 gap-3">
+                {editingId === s.id ? (
+                  <>
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={e => setEditName(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') handleSaveEdit(s.id)
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
+                      className="flex-1 border rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-deep-space-blue"
+                      autoFocus
+                    />
+                    <div className="flex items-center gap-3 shrink-0">
+                      <button
+                        onClick={() => handleSaveEdit(s.id)}
+                        disabled={savingEdit || !editName.trim()}
+                        className="text-sm text-deep-space-blue hover:underline disabled:opacity-40"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={cancelEdit}
+                        className="text-sm text-gray-400 hover:underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <p className="text-sm font-medium text-onyx">{s.name}</p>
+                      <p className="text-xs text-gray-400">{s.id}</p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <button
+                        onClick={() => startEdit(s)}
+                        className="text-sm text-deep-space-blue hover:underline"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(s.id, s.name)}
+                        className="text-sm text-blood-red hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>

@@ -44,6 +44,8 @@ export default function AdminBookForm() {
   const [newGenreName, setNewGenreName] = useState('')
   const [addingType, setAddingType] = useState(false)
   const [newTypeName, setNewTypeName] = useState('')
+  const [addingSeries, setAddingSeries] = useState(false)
+  const [newSeriesName, setNewSeriesName] = useState('')
 
   useEffect(() => {
     if (!isEdit) return
@@ -90,6 +92,17 @@ export default function AdminBookForm() {
     setField('type', slug)
     setNewTypeName('')
     setAddingType(false)
+  }
+
+  async function handleAddSeries(e) {
+    e.preventDefault()
+    const name = newSeriesName.trim()
+    if (!name) return
+    const slug = toSlug(name)
+    await setDoc(doc(db, 'series', slug), { name, genre: form.genre })
+    setField('series', slug)
+    setNewSeriesName('')
+    setAddingSeries(false)
   }
 
   function handleFileChange(e) {
@@ -253,17 +266,47 @@ export default function AdminBookForm() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <label className="block">
-            <span className="text-sm font-medium text-onyx">Series</span>
-            <select
-              value={form.series}
-              onChange={e => setField('series', e.target.value)}
-              className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
-            >
-              <option value="">None / Standalone</option>
-              {genreSeries.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
-          </label>
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-onyx">Series</span>
+              <button
+                type="button"
+                onClick={() => setAddingSeries(a => !a)}
+                className="text-xs text-deep-space-blue hover:underline"
+              >
+                {addingSeries ? 'Cancel' : '+ New'}
+              </button>
+            </div>
+            {addingSeries ? (
+              <div className="mt-1 flex gap-2">
+                <input
+                  type="text"
+                  value={newSeriesName}
+                  onChange={e => setNewSeriesName(e.target.value)}
+                  placeholder="Series name"
+                  className="block w-full border rounded px-3 py-2 text-sm bg-white"
+                  autoFocus
+                />
+                <button
+                  type="button"
+                  onClick={handleAddSeries}
+                  disabled={!newSeriesName.trim()}
+                  className="shrink-0 bg-deep-space-blue text-mint-cream px-3 py-2 rounded text-sm font-medium disabled:opacity-40 hover:bg-regal-navy transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+            ) : (
+              <select
+                value={form.series}
+                onChange={e => setField('series', e.target.value)}
+                className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
+              >
+                <option value="">None / Standalone</option>
+                {genreSeries.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            )}
+          </div>
 
           {form.series && (
             <label className="block">
