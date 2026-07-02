@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 112">
+  <path
+    d="M 50 108 C 14 90 8 68 8 48 L 8 16 C 22 10 36 8 50 8 C 64 8 78 10 92 16 L 92 48 C 92 68 86 90 50 108 Z"
+    fill="#5BB5D5" stroke="#002B4C" stroke-width="5" stroke-linejoin="round"
+  />
+  <text
+    x="50" y="70"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="38"
+    font-style="italic"
+    font-weight="bold"
+    text-anchor="middle"
+    fill="#002B4C"
+  >AP</text>
+</svg>
