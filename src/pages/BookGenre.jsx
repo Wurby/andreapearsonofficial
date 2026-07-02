@@ -109,17 +109,17 @@ function SeriesCard({ seriesInfo, seriesBooks, genreSlug, containerW, containerH
   if (!seriesBooks.length) return null
 
   return (
-    <motion.div variants={item}>
+    <motion.div variants={item} className="h-full">
       <motion.div
         initial="rest"
         {...(!isMobile && { whileHover: 'hover' })}
-        className="group"
+        className="group h-full"
       >
-        <Link to={`/books/${genreSlug}/series/${seriesInfo.id}`} className="block">
-          <div className="mb-6">
+        <Link to={`/books/${genreSlug}/series/${seriesInfo.id}`} className="h-full flex flex-col">
+          <div className="mb-6 shrink-0">
             <SeriesStack books={seriesBooks} containerW={containerW} containerH={containerH} coverW={coverW} isMobile={isMobile} />
           </div>
-          <div style={isMobile ? undefined : { maxWidth: containerW }}>
+          <div className="flex-1 flex flex-col" style={isMobile ? undefined : { maxWidth: containerW }}>
             <motion.h3
               className="text-booktitle mb-2"
               variants={{
@@ -133,7 +133,7 @@ function SeriesCard({ seriesInfo, seriesBooks, genreSlug, containerW, containerH
             <p className="text-xs text-onyx/50 mb-1">
               {seriesBooks.length} {seriesBooks.length === 1 ? 'book' : 'books'}
             </p>
-            <span className="mt-2 block text-xs py-2 px-3 bg-blood-red text-mint-cream text-center border border-transparent transition-colors group-hover:bg-blood-red/90">
+            <span className="mt-auto pt-2 block text-xs py-2 px-3 bg-blood-red text-mint-cream text-center border border-transparent transition-colors group-hover:bg-blood-red/90">
               View series →
             </span>
           </div>

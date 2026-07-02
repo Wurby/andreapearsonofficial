@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 .env
+# Non-secret — just GA4_PROPERTY_ID, needed for `firebase deploy --only functions`
+# to work on a fresh clone. Per Firebase's own convention, .env / .env.<project-id>
+# files under functions/ are meant to be committed unless they hold real secrets.
+!functions/.env
 
 # Editor directories and files
 .vscode/*
