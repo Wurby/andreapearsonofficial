@@ -1,16 +1,39 @@
-# React + Vite
+# andreapearsonofficial.com
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Public author website for Andrea Pearson — YA fantasy, contemporary romance, and clean contemporary romance, plus a professional consulting section (Work With Me). Live at [andreapearsonofficial.com](https://andreapearsonofficial.com) on Firebase Hosting.
 
-Currently, two official plugins are available:
+Full project context, conventions, and patterns live in [AGENTS.md](./AGENTS.md) — read that before making changes, not this file.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+Vite + React 19, React Router v7, Tailwind CSS v4, Framer Motion, Firebase (Auth, Firestore, Storage, Hosting, Cloud Functions, Analytics/GA4).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Setup
 
-## Expanding the ESLint configuration
+```bash
+npm install
+cp .env.example .env   # fill in Firebase web app config
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+`.env` needs the Firebase web app config (`VITE_FIREBASE_*`) — get these from Firebase Console → Project Settings → General → Your apps. Admin actions that use the Admin SDK directly (e.g. `scripts/upload-headshot.mjs`) need `serviceAccountKey.json` in the project root (gitignored, not the same thing as `.env`).
+
+## Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Production build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | ESLint across the frontend (`src/`) and Cloud Functions (`functions/`) |
+| `npm run deploy` | Build, then deploy to Firebase Hosting |
+
+Cloud Functions deploy separately and aren't wrapped in an npm script: `firebase deploy --only functions`.
+
+## Admin panel
+
+`/admin` — password-protected via Firebase Auth (hidden entry point: lock icon in the footer). Manages books, genres, series, site content, theme colors, and site analytics (Dashboard).
+
+## Project structure
+
+See AGENTS.md's File Structure section for the full breakdown. Short version: `src/pages/` is the public site, `src/admin/` is the admin panel, `functions/` is the one Cloud Function backing the admin Dashboard's analytics charts (queries the GA4 Data API).

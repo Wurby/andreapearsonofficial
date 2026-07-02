@@ -55,10 +55,14 @@ Outside the tier system: `text-xs` for eyebrow labels, type taglines, nav UI. Gl
 ## Key Patterns
 
 ### Full-bleed hero detection
-Nav and Layout both use this regex to decide whether to show a transparent nav or a spacer div:
+Nav and Layout both use this exact check (kept in sync manually — no shared constant) to decide whether to show a transparent nav or a spacer div:
 ```js
 const isFullBleedHero =
   pathname === '/' ||
+  pathname === '/about' ||
+  pathname === '/books' ||
+  pathname === '/newsletter' ||
+  pathname === '/work-with-me' ||
   /^\/books\/[^/]+$/.test(pathname) ||
   /^\/books\/[^/]+\/series\/[^/]+$/.test(pathname)
 ```
@@ -74,7 +78,7 @@ Never put `onHoverStart`/`onHoverEnd` on a child inside a parent that uses `whil
 `src/hooks/useIsMobile.js` — exports `useIsMobile(breakpoint = 640)`. Used in `BookGenre.jsx` to disable series stack animations and scale down cover widths on mobile.
 
 ### Series stack sizing
-`COVER_W` in `BookGenre.jsx` is responsive (150px desktop, 90px mobile). All pixel math inside `SeriesStack` scales via `s = coverW / 150`. Container dimensions are computed from `maxN` (largest series in the genre) so all stacks in a genre are uniform height.
+`coverW` in `BookGenre.jsx` is responsive (150px desktop, 90px mobile via `useIsMobile`). All pixel math inside `SeriesStack` scales via `s = coverW / 150`. Container dimensions are computed from `maxN` (largest series in the genre) so all stacks in a genre are uniform height.
 
 ### Button component
 `src/components/Button.jsx` — pass `to` for React Router Link, `href` for external `<a>` (auto-adds `target/_blank` + `rel` for http URLs), or neither for a `<button>`. Props: `variant` (primary/outline/ghost, default primary), `size` (sm/md/lg, default lg). Spread any additional props (disabled, aria-*, etc.).
@@ -85,15 +89,19 @@ Never put `onHoverStart`/`onHoverEnd` on a child inside a parent that uses `whil
 
 ```
 src/
-  pages/          — public routes (Home, About, Books, BookGenre, etc.)
-  admin/pages/    — admin routes (AdminBooks, AdminBookForm, etc.)
-  components/     — shared UI (Nav, Footer, BookCard, Skeleton, Layout)
-  hooks/          — data hooks (useBooks, useGenres, useSeries, useContent, useIsMobile)
-  lib/            — Firebase init (firebase.js) + analytics helper (analytics.js)
-  index.css       — Tailwind @theme tokens + @layer utilities (type scale)
-functions/        — Cloud Functions (own package.json, CommonJS, separate ESLint block —
-                    see eslint.config.js). getSiteAnalytics queries the GA4 Data API for
-                    the admin analytics dashboard; GA4_PROPERTY_ID lives in functions/.env
+  pages/            — public routes (Home, About, Books, BookGenre, BookDetail, etc.)
+  admin/pages/      — admin routes (AdminDashboard, AdminBooks, AdminBookForm, etc.)
+  admin/components/ — admin-only shared UI (BarList — ranked bar chart used on the Dashboard)
+  components/       — shared UI (Nav, Footer, BookCard, Skeleton, Layout, SocialLinks,
+                      PageViewTracker, ScrollToTop)
+  hooks/            — data hooks (useBooks, useGenres, useSeries, useTypes, useContent,
+                      useTheme, useIsMobile)
+  lib/              — Firebase init (firebase.js) + analytics helper (analytics.js)
+  index.css         — Tailwind @theme tokens + @layer utilities (type scale)
+functions/          — Cloud Functions (own package.json, CommonJS, separate ESLint block —
+                      see eslint.config.js). getSiteAnalytics queries the GA4 Data API for
+                      the admin Dashboard's analytics charts; GA4_PROPERTY_ID lives in
+                      functions/.env
 ```
 
 ---
@@ -102,22 +110,24 @@ functions/        — Cloud Functions (own package.json, CommonJS, separate ESLi
 
 GA4 tracking wired via `firebase/analytics`, gated behind `import.meta.env.PROD` (local dev never tracked) — see `src/lib/analytics.js`'s `trackEvent()` helper. Route-change pageviews handled by `PageViewTracker.jsx` (mounted in `Layout.jsx`, public routes only). Click events: `book_buy_click`, `newsletter_signup_click`, `work_with_me_cta_click`, `social_link_click`.
 
-Admin-facing reporting (`/admin/analytics`, Phase 3) reads from GA4 via the `getSiteAnalytics` Cloud Function rather than a parallel Firestore counter system — GA4 is the single source of truth, so dashboard numbers lag reality by a few hours (GA4 processing delay). See `TODOS.md` Phase 3 for the full architecture rationale (decided via `/grill-me`).
+Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a separate route) and reads from GA4 via the `getSiteAnalytics` Cloud Function rather than a parallel Firestore counter system — GA4 is the single source of truth, so numbers lag reality by a few hours (GA4 processing delay). Every report is "rank these categories by one metric" (nominal categorical, one series), so each renders as a horizontal ranked bar list (`BarList.jsx`) in one consistent hue with the value direct-labeled at the bar's tip — no legend, no multi-hue categorical palette in play. See `TODOS.md` Phase 3 for the full architecture rationale (decided via `/grill-me`) and the dataviz redesign notes.
 
 ---
 
 ## Firestore Schema
 
 - `books/{id}` — title, genre, series, seriesOrder, type, coverUrl, description, books2ReadLink, freeViaNewsletter, newsletterLink, featured
-- `genres/{id}` — name, slug, bio, colors
+- `genres/{id}` — name, slug, bio, colors (per-genre theme override — same shape as `settings/theme`, `null` when using site defaults)
 - `series/{id}` — name, genreId
+- `types/{id}` — name (seeded from the original hardcoded 5 values; managed on the Genres admin page's Types column)
 - `settings/content` — headline, intro, bioShort, bioLong, headshotUrl, pullQuote, newsletters, workWithMe, socialLinks, contactEmail
+- `settings/theme` — deepSpaceBlue, regalNavy, mintCream, onyx, bloodRed (site-wide color defaults, editable on the Theme admin page)
 
 ---
 
 ## Current Phase
 
-Design work is mostly complete (key gaps: logo asset awaiting Andrea, OG meta tags, footer polish). See `TODOS.md` for the numbered phase list and current progress — Phases 1–2 (Admin Panel Polish, Work With Me Content Rebuild) are implemented and pending Joshua's visual review; Phase 3 (Google Analytics) is next.
+Design work is mostly complete (key gaps: logo asset awaiting Andrea, OG meta tags, footer polish). See `TODOS.md` for the numbered phase list and current progress — Phases 1–2 (Admin Panel Polish, Work With Me Content Rebuild) are implemented and pending Joshua's visual review; Phase 3 (Google Analytics) is live in production, awaiting real traffic to populate the Dashboard's charts. Phase 4 (A/B Testing) is next.
 
 **Design decisions are locked** — see `design-doc.md` for the full specification. Update it whenever a design decision changes.
 
