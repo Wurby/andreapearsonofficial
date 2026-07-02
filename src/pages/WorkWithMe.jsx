@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useContent } from '../hooks/useContent'
 import SocialLinks from '../components/SocialLinks'
 import Button from '../components/Button'
+import { trackEvent } from '../lib/analytics'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -61,7 +62,15 @@ export default function WorkWithMe() {
                     {paragraphs(c.bio).map((p, pi) => (
                       <p key={pi} className="text-body text-onyx leading-relaxed mb-4 last:mb-8">{p}</p>
                     ))}
-                    <Button href={contactHref}>{c.ctaLabel || 'Book a Session'}</Button>
+                    <Button
+                      href={contactHref}
+                      onClick={() => trackEvent('work_with_me_cta_click', {
+                        ctaType: 'consultation',
+                        consultantName: c.name,
+                      })}
+                    >
+                      {c.ctaLabel || 'Book a Session'}
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -120,7 +129,12 @@ export default function WorkWithMe() {
               </div>
             )}
 
-            <Button href={contactHref}>{speaking.ctaLabel || 'Inquire About Speaking'}</Button>
+            <Button
+              href={contactHref}
+              onClick={() => trackEvent('work_with_me_cta_click', { ctaType: 'speaking' })}
+            >
+              {speaking.ctaLabel || 'Inquire About Speaking'}
+            </Button>
           </motion.section>
 
           <motion.section

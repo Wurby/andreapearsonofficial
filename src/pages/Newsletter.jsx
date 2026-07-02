@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useContent } from '../hooks/useContent'
 import Button from '../components/Button'
+import { trackEvent } from '../lib/analytics'
 
 const ACCENT_MAP = {
   'bg-deep-space-blue': 'bg-blood-red',
@@ -75,7 +76,13 @@ export default function Newsletter() {
                     </p>
 
                     {item.url ? (
-                      <Button href={item.url} size="md" variant="ghost" className="w-full text-center">
+                      <Button
+                        href={item.url}
+                        size="md"
+                        variant="ghost"
+                        className="w-full text-center"
+                        onClick={() => trackEvent('newsletter_signup_click', { newsletterLabel: item.label })}
+                      >
                         Subscribe
                       </Button>
                     ) : (

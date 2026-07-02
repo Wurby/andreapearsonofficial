@@ -16,7 +16,7 @@ Public author website for Andrea Pearson — YA fantasy, contemporary romance, a
 - **React Router v7** — file-based routing in `src/pages/`
 - **Tailwind CSS v4** — `@theme` block in `src/index.css`, no `tailwind.config.js`
 - **Framer Motion** — animations throughout; see patterns below
-- **Firebase** — Auth (admin only), Firestore (all content), Storage (covers/headshots), Hosting
+- **Firebase** — Auth (admin only), Firestore (all content), Storage (covers/headshots), Hosting, Cloud Functions (2nd gen, `functions/` — Blaze plan required), Analytics (GA4)
 
 ---
 
@@ -89,9 +89,20 @@ src/
   admin/pages/    — admin routes (AdminBooks, AdminBookForm, etc.)
   components/     — shared UI (Nav, Footer, BookCard, Skeleton, Layout)
   hooks/          — data hooks (useBooks, useGenres, useSeries, useContent, useIsMobile)
-  lib/            — Firebase init (firebase.js)
+  lib/            — Firebase init (firebase.js) + analytics helper (analytics.js)
   index.css       — Tailwind @theme tokens + @layer utilities (type scale)
+functions/        — Cloud Functions (own package.json, CommonJS, separate ESLint block —
+                    see eslint.config.js). getSiteAnalytics queries the GA4 Data API for
+                    the admin analytics dashboard; GA4_PROPERTY_ID lives in functions/.env
 ```
+
+---
+
+## Analytics
+
+GA4 tracking wired via `firebase/analytics`, gated behind `import.meta.env.PROD` (local dev never tracked) — see `src/lib/analytics.js`'s `trackEvent()` helper. Route-change pageviews handled by `PageViewTracker.jsx` (mounted in `Layout.jsx`, public routes only). Click events: `book_buy_click`, `newsletter_signup_click`, `work_with_me_cta_click`, `social_link_click`.
+
+Admin-facing reporting (`/admin/analytics`, Phase 3) reads from GA4 via the `getSiteAnalytics` Cloud Function rather than a parallel Firestore counter system — GA4 is the single source of truth, so dashboard numbers lag reality by a few hours (GA4 processing delay). See `TODOS.md` Phase 3 for the full architecture rationale (decided via `/grill-me`).
 
 ---
 
@@ -106,7 +117,7 @@ src/
 
 ## Current Phase
 
-**Phase 6 (Design)** — mostly complete. See `TODOS.md` for remaining open items. Key gaps: logo asset (awaiting Andrea), OG meta tags, AnimatePresence page transitions, footer polish.
+Design work is mostly complete (key gaps: logo asset awaiting Andrea, OG meta tags, footer polish). See `TODOS.md` for the numbered phase list and current progress — Phases 1–2 (Admin Panel Polish, Work With Me Content Rebuild) are implemented and pending Joshua's visual review; Phase 3 (Google Analytics) is next.
 
 **Design decisions are locked** — see `design-doc.md` for the full specification. Update it whenever a design decision changes.
 
@@ -114,4 +125,4 @@ src/
 
 ## Admin
 
-Route: `/admin` — password-protected via Firebase Auth. Hidden entry point: lock icon in footer. Admin can manage all books, genres, series, site content, and covers.
+Route: `/admin` — password-protected via Firebase Auth. Hidden entry point: lock icon in footer. Admin can manage all books, genres, series, site content, and covers. The Dashboard (`/admin`, index route) is also the analytics landing page — GA4-backed charts live there, not a separate route.

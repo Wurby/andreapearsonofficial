@@ -7,6 +7,7 @@ import { SkeletonText } from '../components/Skeleton'
 import Button from '../components/Button'
 import Breadcrumb from '../components/Breadcrumb'
 import FadingImage from '../components/FadingImage'
+import { trackEvent } from '../lib/analytics'
 
 const TYPE_LABELS = {
   novella: 'Novella',
@@ -80,7 +81,16 @@ export default function BookDetail() {
       )}
 
       {book.books2ReadLink ? (
-        <Button href={book.books2ReadLink}>Buy / Read →</Button>
+        <Button
+          href={book.books2ReadLink}
+          onClick={() => trackEvent('book_buy_click', {
+            bookId: book.id,
+            bookTitle: book.title,
+            genre: genreSlug,
+          })}
+        >
+          Buy / Read →
+        </Button>
       ) : (
         <p className="text-base text-gray-400">Available to members of Andrea's Readers Group.</p>
       )}

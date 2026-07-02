@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import Layout from './components/Layout'
@@ -43,6 +43,7 @@ function App() {
               <Route path="series" element={<AdminSeries />} />
               <Route path="theme" element={<AdminTheme />} />
               <Route path="content" element={<AdminContent />} />
+              <Route path="analytics" element={<Navigate to="/admin" replace />} />
             </Route>
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />

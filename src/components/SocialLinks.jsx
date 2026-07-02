@@ -1,3 +1,5 @@
+import { trackEvent } from '../lib/analytics'
+
 function IconInstagram({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -83,6 +85,7 @@ export default function SocialLinks({ links, className = '' }) {
           rel="noopener noreferrer"
           aria-label={label}
           className="hover:text-blood-red transition-colors"
+          onClick={() => trackEvent('social_link_click', { platform: key })}
         >
           <Icon className="w-5 h-5" />
         </a>

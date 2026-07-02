@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import Nav from './Nav'
 import Footer from './Footer'
+import PageViewTracker from './PageViewTracker'
 
 export default function Layout() {
   const location = useLocation()
@@ -17,6 +18,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <PageViewTracker />
       <Nav />
       {/* Spacer for fixed nav — omitted on pages whose hero bleeds under the nav */}
       {!isFullBleedHero && <div className="h-16" />}
