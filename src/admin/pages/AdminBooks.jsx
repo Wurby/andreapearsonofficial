@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { deleteDoc, doc } from 'firebase/firestore'
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { useBooks } from '../../hooks/useBooks'
 import { useGenres } from '../../hooks/useGenres'
@@ -29,6 +29,10 @@ export default function AdminBooks() {
   async function handleDelete(id, title) {
     if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return
     await deleteDoc(doc(db, 'books', id))
+  }
+
+  async function handleToggleFeatured(id, current) {
+    await updateDoc(doc(db, 'books', id), { featured: !current })
   }
 
   function toggleSort(key) {
@@ -131,6 +135,7 @@ export default function AdminBooks() {
                     </button>
                   </th>
                 ))}
+                <th className="text-center px-4 py-3 text-xs font-medium text-gray-500 uppercase w-16">Featured</th>
                 <th className="px-4 py-3 w-28"></th>
               </tr>
             </thead>
@@ -147,6 +152,16 @@ export default function AdminBooks() {
                   <td className="px-4 py-2 text-gray-500">{genreName(book.genre)}</td>
                   <td className="px-4 py-2 text-gray-500">{book.series ? seriesName(book.series) : '—'}</td>
                   <td className="px-4 py-2 text-gray-500 capitalize">{book.type}</td>
+                  <td className="px-4 py-2 text-center">
+                    <button
+                      onClick={() => handleToggleFeatured(book.id, book.featured)}
+                      aria-label={book.featured ? 'Unfeature this book' : 'Feature this book'}
+                      title={book.featured ? 'Unfeature this book' : 'Feature this book'}
+                      className={`text-lg leading-none transition-colors ${book.featured ? 'text-blood-red' : 'text-gray-300 hover:text-gray-400'}`}
+                    >
+                      {book.featured ? '★' : '☆'}
+                    </button>
+                  </td>
                   <td className="px-4 py-2 text-right space-x-3 whitespace-nowrap">
                     <Link to={`/admin/books/${book.id}/edit`} className="text-deep-space-blue hover:underline">
                       Edit
