@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useContent } from '../hooks/useContent'
 import SocialLinks from '../components/SocialLinks'
 import Button from '../components/Button'
+import Markdown from '../components/Markdown'
 import { trackEvent } from '../lib/analytics'
 
 const fadeUp = {
@@ -10,10 +11,6 @@ const fadeUp = {
     opacity: 1, y: 0,
     transition: { duration: 0.45, ease: 'easeOut', delay: i * 0.1 },
   }),
-}
-
-function paragraphs(text) {
-  return (text ?? '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean)
 }
 
 export default function WorkWithMe() {
@@ -59,9 +56,9 @@ export default function WorkWithMe() {
                     {c.tagline && (
                       <p className="text-xs text-deep-space-blue/50 mb-6 tracking-widest uppercase">{c.tagline}</p>
                     )}
-                    {paragraphs(c.bio).map((p, pi) => (
-                      <p key={pi} className="text-body text-onyx leading-relaxed mb-4 last:mb-8">{p}</p>
-                    ))}
+                    <div className="mb-8">
+                      <Markdown className="text-body text-onyx leading-relaxed">{c.bio}</Markdown>
+                    </div>
                     <Button
                       href={contactHref}
                       onClick={() => trackEvent('work_with_me_cta_click', {
@@ -85,9 +82,9 @@ export default function WorkWithMe() {
             {doneForYou.tag && (
               <p className="text-xs font-medium text-deep-space-blue/50 mb-6 tracking-widest uppercase">{doneForYou.tag}</p>
             )}
-            {paragraphs(doneForYou.body).map((p, i) => (
-              <p key={i} className="text-body text-onyx leading-relaxed mb-4 last:mb-8">{p}</p>
-            ))}
+            <div className="mb-8">
+              <Markdown className="text-body text-onyx leading-relaxed">{doneForYou.body}</Markdown>
+            </div>
             <p className="text-onyx text-lg">
               Not sure which option fits?{' '}
               <a href={contactHref} className="text-blood-red hover:underline">
@@ -101,9 +98,9 @@ export default function WorkWithMe() {
           >
             <h2 className="text-subtitle text-deep-space-blue mb-2">Speaking &amp; Workshops</h2>
             <div className="w-8 h-px bg-blood-red mt-3 mb-8" />
-            {paragraphs(speaking.body).map((p, i) => (
-              <p key={i} className="text-onyx leading-relaxed mb-4 last:mb-10 text-lg">{p}</p>
-            ))}
+            <div className="mb-10">
+              <Markdown className="text-onyx leading-relaxed text-lg">{speaking.body}</Markdown>
+            </div>
 
             {(speaksTo.length > 0 || topics.length > 0) && (
               <div className="grid sm:grid-cols-2 gap-10 mb-10">

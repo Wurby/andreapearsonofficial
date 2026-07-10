@@ -6,6 +6,7 @@ import { useGenres } from '../hooks/useGenres'
 import BookCard from '../components/BookCard'
 import Breadcrumb from '../components/Breadcrumb'
 import { SkeletonBookCard } from '../components/Skeleton'
+import { bookCountLabel } from '../lib/pluralize'
 
 const stagger = {
   hidden: {},
@@ -62,7 +63,7 @@ export default function SeriesDetail() {
           </h1>
           {!loading && seriesBooks.length > 0 && (
             <p className="text-mint-cream/50 text-base">
-              {seriesBooks.length} {seriesBooks.length === 1 ? 'book' : 'books'}
+              {bookCountLabel(seriesBooks.length)}
             </p>
           )}
         </div>

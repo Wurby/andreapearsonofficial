@@ -2,13 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Button from './Button'
 import FadingImage from './FadingImage'
-
-const TYPE_LABELS = {
-  novella: 'Novella',
-  'short-story': 'Short Story',
-  'picture-book': 'Picture Book',
-  collection: 'Collection',
-}
+import { TYPE_LABELS } from '../lib/bookTypes'
 
 export default function BookCard({ book, seriesLabel }) {
   const detailPath = `/books/${book.genre}/${book.id}`

@@ -5,6 +5,8 @@ import { db } from '../../lib/firebase'
 import { useBooks } from '../../hooks/useBooks'
 import { useGenres } from '../../hooks/useGenres'
 import { useSeries } from '../../hooks/useSeries'
+import { useSessionState } from '../../hooks/useSessionState'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 const NO_SERIES = '__none__'
 const SELECT_CLASS = 'border rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-deep-space-blue hover:border-gray-400 transition-colors'
@@ -20,15 +22,16 @@ export default function AdminBooks() {
   const { books, loading } = useBooks()
   const { genres } = useGenres()
   const { series } = useSeries()
-  const [filterGenre, setFilterGenre] = useState('')
-  const [filterSeries, setFilterSeries] = useState('')
-  const [filterFeatured, setFilterFeatured] = useState(false)
-  const [sortKey, setSortKey] = useState('title')
-  const [sortDir, setSortDir] = useState('asc')
+  const [filterGenre, setFilterGenre]     = useSessionState('adminBooks.filterGenre', '')
+  const [filterSeries, setFilterSeries]   = useSessionState('adminBooks.filterSeries', '')
+  const [filterFeatured, setFilterFeatured] = useSessionState('adminBooks.filterFeatured', false)
+  const [sortKey, setSortKey] = useSessionState('adminBooks.sortKey', 'title')
+  const [sortDir, setSortDir] = useSessionState('adminBooks.sortDir', 'asc')
+  const [pendingDelete, setPendingDelete] = useState(null)
 
-  async function handleDelete(id, title) {
-    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return
-    await deleteDoc(doc(db, 'books', id))
+  async function handleDelete() {
+    await deleteDoc(doc(db, 'books', pendingDelete.id))
+    setPendingDelete(null)
   }
 
   async function handleToggleFeatured(id, current) {
@@ -167,7 +170,7 @@ export default function AdminBooks() {
                       Edit
                     </Link>
                     <button
-                      onClick={() => handleDelete(book.id, book.title)}
+                      onClick={() => setPendingDelete({ id: book.id, title: book.title })}
                       className="text-blood-red hover:underline"
                     >
                       Delete
@@ -183,6 +186,13 @@ export default function AdminBooks() {
         )}
       </div>
       <p className="text-xs text-gray-400 mt-3">{filtered.length} of {books.length} books</p>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        message={`Delete "${pendingDelete?.title}"? This cannot be undone.`}
+        onConfirm={handleDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   )
 }

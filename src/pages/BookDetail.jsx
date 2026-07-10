@@ -7,14 +7,9 @@ import { SkeletonText } from '../components/Skeleton'
 import Button from '../components/Button'
 import Breadcrumb from '../components/Breadcrumb'
 import FadingImage from '../components/FadingImage'
+import Markdown from '../components/Markdown'
 import { trackEvent } from '../lib/analytics'
-
-const TYPE_LABELS = {
-  novella: 'Novella',
-  'short-story': 'Short Story',
-  'picture-book': 'Picture Book',
-  collection: 'Collection',
-}
+import { TYPE_LABELS } from '../lib/bookTypes'
 
 export default function BookDetail() {
   const { genre: genreSlug, id } = useParams()
@@ -75,7 +70,7 @@ export default function BookDetail() {
       )}
 
       {book.description ? (
-        <p className="text-body text-onyx leading-relaxed mb-10">{book.description}</p>
+        <Markdown className="text-body text-onyx leading-relaxed mb-10">{book.description}</Markdown>
       ) : (
         <p className="text-gray-400 italic mb-10 text-lg">No description available.</p>
       )}
@@ -90,6 +85,15 @@ export default function BookDetail() {
           })}
         >
           Buy / Read →
+        </Button>
+      ) : book.freeViaNewsletter ? (
+        <Button
+          variant="outline"
+          {...(book.newsletterLink?.startsWith('http')
+            ? { href: book.newsletterLink || '/newsletter' }
+            : { to: book.newsletterLink || '/newsletter' })}
+        >
+          Get for free here →
         </Button>
       ) : (
         <p className="text-base text-gray-400">Available to members of Andrea's Readers Group.</p>

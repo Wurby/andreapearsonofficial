@@ -1,14 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-
-const NAV_LINKS = [
-  { label: 'Books',        to: '/books',        external: false },
-  { label: 'About',        to: '/about',        external: false },
-  { label: 'Newsletter',   to: '/newsletter',   external: false },
-  { label: 'Work With Me', to: '/work-with-me', external: false },
-  { label: 'The Show',     to: 'https://theandreapearsonshow.com', external: true },
-]
+import { NAV_LINKS } from '../lib/links'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)

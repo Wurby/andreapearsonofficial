@@ -4,6 +4,8 @@ import { db } from '../../lib/firebase'
 import { useGenres } from '../../hooks/useGenres'
 import { useTheme } from '../../hooks/useTheme'
 import { useTypes } from '../../hooks/useTypes'
+import MarkdownBadge, { MARKDOWN_HINT } from '../components/MarkdownBadge'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 const COLOR_KEYS = ['deepSpaceBlue', 'regalNavy', 'mintCream', 'onyx', 'bloodRed']
 // Role-based labels, not the current default color names — see matching note in AdminTheme.jsx.
@@ -41,6 +43,11 @@ export default function AdminGenres() {
   const { types, loading: typesLoading } = useTypes()
   const [newTypeName, setNewTypeName] = useState('')
   const [addingType, setAddingType]   = useState(false)
+  const [editingType, setEditingType] = useState(null)
+  const [editTypeName, setEditTypeName] = useState('')
+  const [savingType, setSavingType]   = useState(false)
+
+  const [pendingDelete, setPendingDelete] = useState(null)
 
   function startEdit(genre) {
     const hasColors = genre.colors && Object.keys(genre.colors).length > 0
@@ -79,10 +86,11 @@ export default function AdminGenres() {
     }
   }
 
-  async function deleteGenre(genre) {
-    if (!window.confirm(`Delete "${genre.name}"? This won't delete books in the genre.`)) return
-    await deleteDoc(doc(db, 'genres', genre.id))
-    if (editing === genre.id) setEditing(null)
+  async function deleteGenre() {
+    const { id } = pendingDelete
+    await deleteDoc(doc(db, 'genres', id))
+    if (editing === id) setEditing(null)
+    setPendingDelete(null)
   }
 
   async function addType(e) {
@@ -99,9 +107,32 @@ export default function AdminGenres() {
     }
   }
 
-  async function deleteType(type) {
-    if (!window.confirm(`Delete "${type.name}"? Books using this type will keep it, but it won't appear as an option anymore.`)) return
-    await deleteDoc(doc(db, 'types', type.id))
+  async function deleteType() {
+    await deleteDoc(doc(db, 'types', pendingDelete.id))
+    setPendingDelete(null)
+  }
+
+  function startEditType(type) {
+    setEditingType(type.id)
+    setEditTypeName(type.name)
+  }
+
+  function cancelEditType() {
+    setEditingType(null)
+    setEditTypeName('')
+  }
+
+  async function saveEditType(id) {
+    const name = editTypeName.trim()
+    if (!name) return
+    setSavingType(true)
+    try {
+      await updateDoc(doc(db, 'types', id), { name })
+      setEditingType(null)
+      setEditTypeName('')
+    } finally {
+      setSavingType(false)
+    }
   }
 
   function setColor(key, val) {
@@ -143,7 +174,10 @@ export default function AdminGenres() {
                     <button onClick={() => startEdit(genre)} className="text-sm text-deep-space-blue hover:underline">
                       Edit
                     </button>
-                    <button onClick={() => deleteGenre(genre)} className="text-sm text-blood-red hover:underline">
+                    <button
+                      onClick={() => setPendingDelete({ kind: 'genre', id: genre.id, name: genre.name })}
+                      className="text-sm text-blood-red hover:underline"
+                    >
                       Delete
                     </button>
                   </>
@@ -154,7 +188,10 @@ export default function AdminGenres() {
             {editing === genre.id && (
               <div className="mt-4 pt-4 border-t space-y-4">
                 <label className="block">
-                  <span className="text-sm font-medium text-onyx">Genre Bio</span>
+                  <span className="text-sm font-medium text-onyx flex items-center gap-2">
+                    Genre Bio
+                    <MarkdownBadge />
+                  </span>
                   <textarea
                     value={form.bio}
                     onChange={e => setForm(f => ({ ...f, bio: e.target.value }))}
@@ -162,6 +199,7 @@ export default function AdminGenres() {
                     className="mt-1 block w-full border rounded px-3 py-2 text-sm resize-y"
                     placeholder="Bio shown on the genre's About page…"
                   />
+                  <p className="text-xs text-gray-400 mt-1">{MARKDOWN_HINT}</p>
                 </label>
 
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -225,14 +263,52 @@ export default function AdminGenres() {
         <h2 className="text-sm font-semibold text-onyx uppercase tracking-wide mb-3">Types</h2>
         <div className="bg-white rounded border divide-y mb-6">
           {types.map(type => (
-            <div key={type.id} className="flex items-center justify-between px-4 py-3">
-              <p className="text-sm font-medium text-onyx">{type.name}</p>
-              <button
-                onClick={() => deleteType(type)}
-                className="text-sm text-blood-red hover:underline"
-              >
-                Delete
-              </button>
+            <div key={type.id} className="flex items-center justify-between px-4 py-3 gap-3">
+              {editingType === type.id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editTypeName}
+                    onChange={e => setEditTypeName(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') saveEditType(type.id)
+                      if (e.key === 'Escape') cancelEditType()
+                    }}
+                    className="flex-1 border rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-deep-space-blue"
+                    autoFocus
+                  />
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      onClick={() => saveEditType(type.id)}
+                      disabled={savingType || !editTypeName.trim()}
+                      className="text-sm text-deep-space-blue hover:underline disabled:opacity-40"
+                    >
+                      Save
+                    </button>
+                    <button onClick={cancelEditType} className="text-sm text-gray-400 hover:underline">
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-onyx">{type.name}</p>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <button
+                      onClick={() => startEditType(type)}
+                      className="text-sm text-deep-space-blue hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => setPendingDelete({ kind: 'type', id: type.id, name: type.name })}
+                      className="text-sm text-blood-red hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           ))}
           {types.length === 0 && (
@@ -258,6 +334,17 @@ export default function AdminGenres() {
         </form>
       </div>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        message={
+          pendingDelete?.kind === 'type'
+            ? `Delete "${pendingDelete?.name}"? Books using this type will keep it, but it won't appear as an option anymore.`
+            : `Delete "${pendingDelete?.name}"? This won't delete books in the genre.`
+        }
+        onConfirm={pendingDelete?.kind === 'type' ? deleteType : deleteGenre}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   )
 }

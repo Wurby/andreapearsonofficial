@@ -4,6 +4,10 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 import { db, storage } from '../../lib/firebase'
 import { useContent } from '../../hooks/useContent'
 import { useTheme } from '../../hooks/useTheme'
+import { useBooks } from '../../hooks/useBooks'
+import MarkdownBadge, { MARKDOWN_HINT } from '../components/MarkdownBadge'
+import BookPicker from '../components/BookPicker'
+import { spotifyEmbedSrc, youtubeEmbedSrc, applePodcastsEmbedSrc } from '../../lib/podcastEmbeds'
 
 const SOCIAL_PLATFORMS = [
   { key: 'instagram', label: 'Instagram',   placeholder: 'https://instagram.com/yourhandle' },
@@ -86,8 +90,29 @@ const DEFAULT_WORK_WITH_ME = {
   },
 }
 
+// Confirmed with Joshua 2026-07-10 — verified against search results matching
+// "The Andrea Pearson Show" exactly (Spotify search also surfaces an unrelated
+// "Andrea Pearson Audiobooks" show, so these aren't guessable from a search alone).
+// Seeds the admin form so the public Podcast section doesn't go blank until
+// Andrea opens this tab and hits Save once — same pattern as DEFAULT_WORK_WITH_ME.
+const DEFAULT_PODCAST = {
+  eyebrow: 'Podcast',
+  heading: 'The Andrea Pearson Show',
+  body: 'Solo episodes and guest interviews on mindset, marketing, and building sustainable success — new episodes weekly.',
+  spotify:       { enabled: true, url: 'https://open.spotify.com/show/3RbOgqJMKGaKxeAr9gl5ZZ' },
+  youtube:       { enabled: true, url: 'https://www.youtube.com/channel/UCsKoXraaU4PD1FCYOoq_Pfw' },
+  applePodcasts: { enabled: true, url: 'https://podcasts.apple.com/us/podcast/the-andrea-pearson-show/id1692828324' },
+}
+
+const PODCAST_PLATFORMS = [
+  { key: 'spotify',       label: 'Spotify',        placeholder: 'https://open.spotify.com/show/…',              parse: spotifyEmbedSrc },
+  { key: 'youtube',       label: 'YouTube',        placeholder: 'https://www.youtube.com/channel/…',            parse: youtubeEmbedSrc },
+  { key: 'applePodcasts', label: 'Apple Podcasts', placeholder: 'https://podcasts.apple.com/us/podcast/…/id…', parse: applePodcastsEmbedSrc },
+]
+
 const TABS = [
   { key: 'homepage',    label: 'Homepage' },
+  { key: 'podcast',     label: 'Podcast' },
   { key: 'bio',         label: 'Author Bio' },
   { key: 'newsletters', label: 'Newsletters' },
   { key: 'workWithMe',  label: 'Work With Me' },
@@ -103,6 +128,8 @@ const EMPTY_FORM = {
   headshotUrl:  '',
   pullQuote:    '',
   newsletters:  [],
+  homepageHeroes: ['', '', ''],
+  podcast:      DEFAULT_PODCAST,
   workWithMe:   DEFAULT_WORK_WITH_ME,
   socialLinks:  EMPTY_SOCIAL,
   contactEmail: DEFAULT_CONTACT_EMAIL,
@@ -114,6 +141,23 @@ function migrateWorkWithMe(content) {
   const workWithMe = { ...content.workWithMe }
   delete workWithMe.contactEmail
   return workWithMe
+}
+
+function migrateHomepageHeroes(content) {
+  const heroes = content.homepageHeroes ?? []
+  return [0, 1, 2].map(i => heroes[i] ?? '')
+}
+
+function migratePodcast(content) {
+  const p = content.podcast ?? {}
+  return {
+    eyebrow: p.eyebrow ?? DEFAULT_PODCAST.eyebrow,
+    heading: p.heading ?? DEFAULT_PODCAST.heading,
+    body:    p.body    ?? DEFAULT_PODCAST.body,
+    spotify:       { ...DEFAULT_PODCAST.spotify,       ...p.spotify },
+    youtube:       { ...DEFAULT_PODCAST.youtube,       ...p.youtube },
+    applePodcasts: { ...DEFAULT_PODCAST.applePodcasts, ...p.applePodcasts },
+  }
 }
 
 function migrateContactEmail(content) {
@@ -134,6 +178,7 @@ function migrateNewsletters(content) {
 export default function AdminContent() {
   const { content, loading }          = useContent()
   const { theme }                     = useTheme()
+  const { books }                     = useBooks()
   const [form, setForm]               = useState(EMPTY_FORM)
   const [saving, setSaving]           = useState(false)
   const [saved, setSaved]             = useState(false)
@@ -153,6 +198,8 @@ export default function AdminContent() {
         headshotUrl:  content.headshotUrl  ?? '',
         pullQuote:    content.pullQuote    ?? '',
         newsletters:  migrateNewsletters(content),
+        homepageHeroes: migrateHomepageHeroes(content),
+        podcast:      migratePodcast(content),
         workWithMe:   migrateWorkWithMe(content),
         socialLinks:  { ...EMPTY_SOCIAL, ...content.socialLinks },
         contactEmail: migrateContactEmail(content),
@@ -164,6 +211,16 @@ export default function AdminContent() {
   const setSocialLink = (key, val) => setForm(f => ({
     ...f, socialLinks: { ...f.socialLinks, [key]: val },
   }))
+
+  // A book can only occupy one hero slot — picking it into a new slot clears
+  // any other slot it was already in, instead of allowing duplicates.
+  function setHeroSlot(i, bookId) {
+    setForm(f => {
+      const heroes = f.homepageHeroes.map((id, idx) => (idx !== i && id === bookId ? '' : id))
+      heroes[i] = bookId
+      return { ...f, homepageHeroes: heroes }
+    })
+  }
 
   // Newsletter CRUD
   function addNewsletter() {
@@ -188,6 +245,14 @@ export default function AdminContent() {
       return { ...f, newsletters }
     })
   }
+
+  // Podcast
+  const setPodcastField = (key, val) => setForm(f => ({
+    ...f, podcast: { ...f.podcast, [key]: val },
+  }))
+  const setPodcastPlatform = (platform, key, val) => setForm(f => ({
+    ...f, podcast: { ...f.podcast, [platform]: { ...f.podcast[platform], [key]: val } },
+  }))
 
   // Work With Me
   const setWorkWithMeField = (key, val) => setForm(f => ({
@@ -302,21 +367,128 @@ export default function AdminContent() {
             />
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-onyx">Intro</span>
+            <span className="text-sm font-medium text-onyx flex items-center gap-2">
+              Intro
+              <MarkdownBadge />
+            </span>
             <textarea
               value={form.intro}
               onChange={e => setField('intro', e.target.value)}
               rows={3}
               className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
             />
+            <p className="text-xs text-gray-400 mt-1">{MARKDOWN_HINT}</p>
           </label>
+
+          <div>
+            <span className="text-sm font-medium text-onyx">Homepage Hero Covers</span>
+            <p className="text-xs text-gray-400 mt-0.5 mb-2">
+              Up to 3 book covers scattered behind the hero headline, in this order. Separate from the
+              "Featured" flag used by the Featured Titles section further down the page.
+            </p>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {form.homepageHeroes.map((bookId, i) => (
+                <div key={i} className="block">
+                  <span className="text-xs font-medium text-onyx">Position {i + 1}</span>
+                  <div className="mt-1">
+                    <BookPicker
+                      books={books}
+                      value={bookId}
+                      onChange={id => setHeroSlot(i, id)}
+                      excludeIds={form.homepageHeroes.filter((_, idx) => idx !== i)}
+                      placeholder="Search books…"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Podcast ─────────────────────────────────────────── */}
+        <section hidden={activeTab !== 'podcast'} className="bg-white rounded border p-6 space-y-4">
+          <div>
+            <h2 className="font-semibold text-deep-space-blue">Podcast</h2>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Shown on the homepage, above "About Andrea." Toggle a platform off to hide its embed — the whole section hides itself if none are on.
+            </p>
+          </div>
+          <label className="block">
+            <span className="text-sm font-medium text-onyx">Eyebrow Label</span>
+            <input
+              type="text"
+              value={form.podcast.eyebrow}
+              onChange={e => setPodcastField('eyebrow', e.target.value)}
+              className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
+            />
+          </label>
+          <label className="block">
+            <span className="text-sm font-medium text-onyx">Heading</span>
+            <input
+              type="text"
+              value={form.podcast.heading}
+              onChange={e => setPodcastField('heading', e.target.value)}
+              className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
+            />
+          </label>
+          <label className="block">
+            <span className="text-sm font-medium text-onyx flex items-center gap-2">
+              Description
+              <MarkdownBadge />
+            </span>
+            <textarea
+              value={form.podcast.body}
+              onChange={e => setPodcastField('body', e.target.value)}
+              rows={3}
+              className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
+            />
+            <p className="text-xs text-gray-400 mt-1">{MARKDOWN_HINT}</p>
+          </label>
+
+          <div className="space-y-3 pt-2">
+            {PODCAST_PLATFORMS.map(({ key, label, placeholder, parse }) => {
+              const platform = form.podcast[key]
+              const resolved = parse(platform.url)
+              return (
+                <div key={key} className="border rounded p-4 space-y-3 bg-gray-50">
+                  <label className="flex items-center gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={platform.enabled}
+                      onChange={e => setPodcastPlatform(key, 'enabled', e.target.checked)}
+                      className="w-4 h-4 accent-deep-space-blue"
+                    />
+                    <span className="text-sm font-medium text-onyx">{label}</span>
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-medium text-onyx">Show / Channel URL</span>
+                    <input
+                      type="url"
+                      value={platform.url}
+                      onChange={e => setPodcastPlatform(key, 'url', e.target.value)}
+                      placeholder={placeholder}
+                      className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
+                    />
+                    <p className={`text-xs mt-1 ${platform.url && !resolved ? 'text-blood-red' : 'text-gray-400'}`}>
+                      {platform.url
+                        ? (resolved ? 'Embed link recognized.' : "Couldn't recognize this as an embeddable link — paste the public show/channel URL.")
+                        : "Paste the public URL you'd share for this show."}
+                    </p>
+                  </label>
+                </div>
+              )
+            })}
+          </div>
         </section>
 
         {/* ── Author Bio ──────────────────────────────────────── */}
         <section hidden={activeTab !== 'bio'} className="bg-white rounded border p-6 space-y-4">
           <h2 className="font-semibold text-deep-space-blue">Author Bio</h2>
           <label className="block">
-            <span className="text-sm font-medium text-onyx">Short Bio</span>
+            <span className="text-sm font-medium text-onyx flex items-center gap-2">
+              Short Bio
+              <MarkdownBadge />
+            </span>
             <textarea
               value={form.bioShort}
               onChange={e => setField('bioShort', e.target.value)}
@@ -324,18 +496,22 @@ export default function AdminContent() {
               className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
             />
             <p className="text-xs text-gray-400 mt-1">
-              Home page bio blurb. If left blank, the Home page falls back to the start of Full Bio below.
+              Home page bio blurb. If left blank, the Home page falls back to the start of Full Bio below
+              (plain text only — Markdown isn't parsed in that fallback preview).
             </p>
           </label>
           <label className="block">
-            <span className="text-sm font-medium text-onyx">Full Bio</span>
+            <span className="text-sm font-medium text-onyx flex items-center gap-2">
+              Full Bio
+              <MarkdownBadge />
+            </span>
             <textarea
               value={form.bioLong}
               onChange={e => setField('bioLong', e.target.value)}
               rows={10}
               className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
             />
-            <p className="text-xs text-gray-400 mt-1">About page biography.</p>
+            <p className="text-xs text-gray-400 mt-1">About page biography. {MARKDOWN_HINT}</p>
           </label>
           <div>
             <span className="text-sm font-medium text-onyx">Headshot</span>
@@ -371,7 +547,10 @@ export default function AdminContent() {
             </div>
           </div>
           <label className="block">
-            <span className="text-sm font-medium text-onyx">Pull Quote</span>
+            <span className="text-sm font-medium text-onyx flex items-center gap-2">
+              Pull Quote
+              <MarkdownBadge />
+            </span>
             <textarea
               value={form.pullQuote}
               onChange={e => setField('pullQuote', e.target.value)}
@@ -379,7 +558,9 @@ export default function AdminContent() {
               className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
               placeholder="A short quote from Andrea, shown on the About page. Leave blank to hide."
             />
-            <p className="text-xs text-gray-400 mt-1">About page pull quote. Leave blank to hide that section.</p>
+            <p className="text-xs text-gray-400 mt-1">
+              About page pull quote. Leave blank to hide that section. {MARKDOWN_HINT}
+            </p>
           </label>
         </section>
 
@@ -432,7 +613,10 @@ export default function AdminContent() {
               </label>
 
               <label className="block">
-                <span className="text-xs font-medium text-onyx">Description</span>
+                <span className="text-xs font-medium text-onyx flex items-center gap-2">
+                  Description
+                  <MarkdownBadge />
+                </span>
                 <textarea
                   value={item.description}
                   onChange={e => updateNewsletter(i, 'description', e.target.value)}
@@ -561,14 +745,17 @@ export default function AdminContent() {
                 </label>
 
                 <label className="block">
-                  <span className="text-xs font-medium text-onyx">Bio</span>
+                  <span className="text-xs font-medium text-onyx flex items-center gap-2">
+                    Bio
+                    <MarkdownBadge />
+                  </span>
                   <textarea
                     value={c.bio}
                     onChange={e => updateConsultant(i, 'bio', e.target.value)}
                     rows={6}
                     className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
                   />
-                  <p className="text-xs text-gray-400 mt-1">Separate paragraphs with a blank line.</p>
+                  <p className="text-xs text-gray-400 mt-1">{MARKDOWN_HINT}</p>
                 </label>
 
                 <label className="block">
@@ -610,14 +797,17 @@ export default function AdminContent() {
               />
             </label>
             <label className="block">
-              <span className="text-xs font-medium text-onyx">Body</span>
+              <span className="text-xs font-medium text-onyx flex items-center gap-2">
+                Body
+                <MarkdownBadge />
+              </span>
               <textarea
                 value={form.workWithMe.doneForYou.body}
                 onChange={e => setDoneForYouField('body', e.target.value)}
                 rows={6}
                 className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
               />
-              <p className="text-xs text-gray-400 mt-1">Separate paragraphs with a blank line.</p>
+              <p className="text-xs text-gray-400 mt-1">{MARKDOWN_HINT}</p>
             </label>
           </div>
 
@@ -628,14 +818,17 @@ export default function AdminContent() {
               <p className="text-xs text-gray-400 mt-0.5">Third and final section on the page.</p>
             </div>
             <label className="block">
-              <span className="text-xs font-medium text-onyx">Body</span>
+              <span className="text-xs font-medium text-onyx flex items-center gap-2">
+                Body
+                <MarkdownBadge />
+              </span>
               <textarea
                 value={form.workWithMe.speaking.body}
                 onChange={e => setSpeakingField('body', e.target.value)}
                 rows={6}
                 className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
               />
-              <p className="text-xs text-gray-400 mt-1">Separate paragraphs with a blank line.</p>
+              <p className="text-xs text-gray-400 mt-1">{MARKDOWN_HINT}</p>
             </label>
 
             <div>

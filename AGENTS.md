@@ -110,7 +110,7 @@ functions/          — Cloud Functions (own package.json, CommonJS, separate ES
 
 GA4 tracking wired via `firebase/analytics`, gated behind `import.meta.env.PROD` (local dev never tracked) — see `src/lib/analytics.js`'s `trackEvent()` helper. Route-change pageviews handled by `PageViewTracker.jsx` (mounted in `Layout.jsx`, public routes only). Click events: `book_buy_click`, `newsletter_signup_click`, `work_with_me_cta_click`, `social_link_click`.
 
-Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a separate route) and reads from GA4 via the `getSiteAnalytics` Cloud Function rather than a parallel Firestore counter system — GA4 is the single source of truth, so numbers lag reality by a few hours (GA4 processing delay). Every report is "rank these categories by one metric" (nominal categorical, one series), so each renders as a horizontal ranked bar list (`BarList.jsx`) in one consistent hue with the value direct-labeled at the bar's tip — no legend, no multi-hue categorical palette in play. See `TODOS.md` Phase 3 for the full architecture rationale (decided via `/grill-me`) and the dataviz redesign notes.
+Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a separate route) and reads from GA4 via the `getSiteAnalytics` Cloud Function rather than a parallel Firestore counter system — GA4 is the single source of truth, so numbers lag reality by a few hours (GA4 processing delay). Every report is "rank these categories by one metric" (nominal categorical, one series), so each renders as a horizontal ranked bar list (`BarList.jsx`) in one consistent hue with the value direct-labeled at the bar's tip — no legend, no multi-hue categorical palette in play.
 
 ---
 
@@ -120,14 +120,16 @@ Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a sep
 - `genres/{id}` — name, slug, bio, colors (per-genre theme override — same shape as `settings/theme`, `null` when using site defaults)
 - `series/{id}` — name, genreId
 - `types/{id}` — name (seeded from the original hardcoded 5 values; managed on the Genres admin page's Types column)
-- `settings/content` — headline, intro, bioShort, bioLong, headshotUrl, pullQuote, newsletters, workWithMe, socialLinks, contactEmail
+- `settings/content` — headline, intro, bioShort, bioLong, headshotUrl, pullQuote, newsletters, homepageHeroes, podcast, workWithMe, socialLinks, contactEmail
+  - `homepageHeroes` — fixed-length-3 array of book IDs (`''` for an empty slot), index = hero position. Controls which covers scatter behind the `Home.jsx` hero headline and in what order — independent of the `featured` flag on `books/{id}` (which drives the separate Featured Titles grid). Edited on the Content page's Homepage tab; a book can only occupy one slot, picking it into a new one clears the old one.
+  - `podcast` — `{ eyebrow, heading, body, spotify: {enabled, url}, youtube: {enabled, url}, applePodcasts: {enabled, url} }`. Homepage section (above "About Andrea") renders one real embed per enabled platform — see `src/lib/podcastEmbeds.js` for how each platform's public URL gets turned into an iframe src (Spotify show embed, YouTube "uploads" playlist embed, Apple Podcasts embed). Section hides itself entirely if no platform is enabled/resolves.
 - `settings/theme` — deepSpaceBlue, regalNavy, mintCream, onyx, bloodRed (site-wide color defaults, editable on the Theme admin page)
 
 ---
 
 ## Current Phase
 
-Design work is mostly complete (key gaps: logo asset awaiting Andrea, OG meta tags, footer polish). See `TODOS.md` for the numbered phase list and current progress — Phases 1–2 (Admin Panel Polish, Work With Me Content Rebuild) are implemented and pending Joshua's visual review; Phase 3 (Google Analytics) is live in production, awaiting real traffic to populate the Dashboard's charts. Phase 4 (Podcast Feature) is next — scope not yet defined.
+Design work is mostly complete (key gaps: logo asset awaiting Andrea, OG meta tags, footer polish). Admin Panel Polish, Work With Me Content Rebuild, Google Analytics, and the homepage Podcast Feature are all built — see `TODOS.md` for the numbered phase list and remaining work. Phase 1 there is just the Podcast Feature's visual sign-off; Phase 2 ("Coming Soon" Books) is next and not yet scoped.
 
 **Design decisions are locked** — see `design-doc.md` for the full specification. Update it whenever a design decision changes.
 

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useContent } from '../hooks/useContent'
 import Button from '../components/Button'
+import Markdown from '../components/Markdown'
 import { trackEvent } from '../lib/analytics'
 
 const ACCENT_MAP = {
@@ -72,7 +73,7 @@ export default function Newsletter() {
                       {item.label || 'Newsletter'}
                     </h2>
                     <p className="text-base leading-relaxed mb-10 flex-1 text-mint-cream/60">
-                      {item.description}
+                      <Markdown inline>{item.description}</Markdown>
                     </p>
 
                     {item.url ? (

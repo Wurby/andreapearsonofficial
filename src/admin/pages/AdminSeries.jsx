@@ -3,6 +3,7 @@ import { doc, deleteDoc, setDoc } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { useSeries } from '../../hooks/useSeries'
 import { useGenres } from '../../hooks/useGenres'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 function toSlug(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -21,6 +22,8 @@ export default function AdminSeries() {
   const [editingId, setEditingId]   = useState(null)
   const [editName, setEditName]     = useState('')
   const [savingEdit, setSavingEdit] = useState(false)
+
+  const [pendingDelete, setPendingDelete] = useState(null)
 
   async function handleAdd(e) {
     e.preventDefault()
@@ -46,9 +49,9 @@ export default function AdminSeries() {
     setAddingGenre(false)
   }
 
-  async function handleDelete(id, name) {
-    if (!window.confirm(`Delete "${name}"? Books in this series won't be deleted but will lose their series assignment.`)) return
-    await deleteDoc(doc(db, 'series', id))
+  async function handleDelete() {
+    await deleteDoc(doc(db, 'series', pendingDelete.id))
+    setPendingDelete(null)
   }
 
   function startEdit(s) {
@@ -140,7 +143,7 @@ export default function AdminSeries() {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(s.id, s.name)}
+                        onClick={() => setPendingDelete({ id: s.id, name: s.name })}
                         className="text-sm text-blood-red hover:underline"
                       >
                         Delete
@@ -216,6 +219,13 @@ export default function AdminSeries() {
           </button>
         </form>
       </div>
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        message={`Delete "${pendingDelete?.name}"? Books in this series won't be deleted but will lose their series assignment.`}
+        onConfirm={handleDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   )
 }

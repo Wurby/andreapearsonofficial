@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useGenres } from '../hooks/useGenres'
 import { SkeletonText } from '../components/Skeleton'
+import Markdown from '../components/Markdown'
 
 export default function AboutGenre() {
   const { genre: slug } = useParams()
@@ -42,7 +43,7 @@ export default function AboutGenre() {
         {loading ? (
           <SkeletonText lines={5} />
         ) : genre?.bio ? (
-          <p className="text-body text-onyx leading-relaxed">{genre.bio}</p>
+          <Markdown className="text-body text-onyx leading-relaxed">{genre.bio}</Markdown>
         ) : (
           <p className="text-gray-400 italic text-lg">Bio coming soon.</p>
         )}

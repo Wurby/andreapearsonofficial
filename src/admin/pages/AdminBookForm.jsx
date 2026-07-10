@@ -6,6 +6,7 @@ import { db, storage } from '../../lib/firebase'
 import { useGenres } from '../../hooks/useGenres'
 import { useSeries } from '../../hooks/useSeries'
 import { useTypes } from '../../hooks/useTypes'
+import MarkdownBadge, { MARKDOWN_HINT } from '../components/MarkdownBadge'
 
 function toSlug(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
@@ -331,46 +332,60 @@ export default function AdminBookForm() {
               type="url"
               value={form.books2ReadLink}
               onChange={e => setField('books2ReadLink', e.target.value)}
-              className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
+              disabled={form.freeViaNewsletter}
+              className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed"
               placeholder="https://books2read.com/…"
             />
-            <span className="text-xs text-gray-400 mt-0.5 block">Shows a "Buy / Read" button on the book card.</span>
+            <span className="text-xs text-gray-400 mt-0.5 block">
+              {form.freeViaNewsletter
+                ? 'Disabled — a book shows only one button. Uncheck "Free via newsletter" below to use a buy link instead.'
+                : 'Shows a "Buy / Read" button on the book card.'}
+            </span>
           </label>
           <label className="flex items-start gap-3 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={form.freeViaNewsletter}
-              onChange={e => setField('freeViaNewsletter', e.target.checked)}
+              onChange={e => {
+                const checked = e.target.checked
+                setForm(f => ({ ...f, freeViaNewsletter: checked, books2ReadLink: checked ? '' : f.books2ReadLink }))
+              }}
               className="w-4 h-4 mt-0.5 accent-deep-space-blue"
             />
             <span className="text-sm font-medium text-onyx">
               Free via newsletter
-              <span className="block text-xs font-normal text-gray-400">Shows a "Get for free here →" button on the book card.</span>
+              <span className="block text-xs font-normal text-gray-400">Shows a "Get for free here →" button on the book card instead of a buy link.</span>
             </span>
           </label>
           {form.freeViaNewsletter && (
             <label className="block pl-7">
-              <span className="text-sm font-medium text-onyx">Link URL</span>
+              <span className="text-sm font-medium text-onyx">Newsletter Signup Link</span>
               <input
                 type="url"
                 value={form.newsletterLink}
                 onChange={e => setField('newsletterLink', e.target.value)}
                 className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
-                placeholder="/newsletter"
+                placeholder="https://her-email-provider.com/signup-page"
               />
-              <span className="text-xs text-gray-400 mt-0.5 block">Leave blank to link to the site newsletter page.</span>
+              <span className="text-xs text-gray-400 mt-0.5 block">
+                Paste the actual page readers sign up on to receive this book (opens in a new tab). Leave blank to fall back to the site's built-in /newsletter page instead.
+              </span>
             </label>
           )}
         </div>
 
         <label className="block">
-          <span className="text-sm font-medium text-onyx">Description</span>
+          <span className="text-sm font-medium text-onyx flex items-center gap-2">
+            Description
+            <MarkdownBadge />
+          </span>
           <textarea
             value={form.description}
             onChange={e => setField('description', e.target.value)}
             rows={6}
             className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white resize-y"
           />
+          <p className="text-xs text-gray-400 mt-1">{MARKDOWN_HINT}</p>
         </label>
 
         <div>

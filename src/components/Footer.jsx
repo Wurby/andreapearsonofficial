@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useContent } from '../hooks/useContent'
 import SocialLinks from './SocialLinks'
+import { NAV_LINKS } from '../lib/links'
 
 export default function Footer() {
   const { content } = useContent()
@@ -15,11 +16,21 @@ export default function Footer() {
         </div>
 
         <nav className="flex flex-wrap justify-center gap-6 text-sm text-mint-cream/60">
-          <Link to="/books" className="hover:text-mint-cream transition-colors">Books</Link>
-          <Link to="/about" className="hover:text-mint-cream transition-colors">About</Link>
-          <Link to="/newsletter" className="hover:text-mint-cream transition-colors">Newsletter</Link>
-          <Link to="/work-with-me" className="hover:text-mint-cream transition-colors">Work With Me</Link>
-          <a href="https://theandreapearsonshow.com" target="_blank" rel="noopener noreferrer" className="hover:text-mint-cream transition-colors">The Show</a>
+          {NAV_LINKS.map(link => link.external ? (
+            <a
+              key={link.to}
+              href={link.to}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-mint-cream transition-colors"
+            >
+              {link.label}
+            </a>
+          ) : (
+            <Link key={link.to} to={link.to} className="hover:text-mint-cream transition-colors">
+              {link.label}
+            </Link>
+          ))}
         </nav>
       </div>
 

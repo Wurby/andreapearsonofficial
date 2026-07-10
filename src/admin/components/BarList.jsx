@@ -6,11 +6,20 @@
 const MAX_BAR_PCT = 82 // leaves room for the trailing value label
 
 function Bar({ label, secondary, value, pct, formatValue }) {
+  const fullText = secondary ? `${label} · ${secondary}` : label
   return (
     <div className="flex items-center gap-3">
-      <span className="w-28 sm:w-36 shrink-0 truncate text-sm text-onyx" title={label}>
-        {label}
-        {secondary && <span className="text-gray-400"> · {secondary}</span>}
+      <span className="relative group w-28 sm:w-36 shrink-0">
+        <span className="block truncate text-sm text-onyx">
+          {label}
+          {secondary && <span className="text-gray-400"> · {secondary}</span>}
+        </span>
+        <span
+          role="tooltip"
+          className="pointer-events-none absolute left-0 bottom-full z-10 mb-1.5 hidden whitespace-nowrap rounded bg-onyx px-2 py-1 text-xs text-mint-cream shadow-lg group-hover:block"
+        >
+          {fullText}
+        </span>
       </span>
       <div className="flex-1 min-w-0 flex items-center h-5">
         <div

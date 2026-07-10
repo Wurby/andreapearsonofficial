@@ -9,6 +9,8 @@ import BookCard from '../components/BookCard'
 import Breadcrumb from '../components/Breadcrumb'
 import { SkeletonBookCard } from '../components/Skeleton'
 import FadingImage from '../components/FadingImage'
+import Markdown from '../components/Markdown'
+import { bookCountLabel } from '../lib/pluralize'
 
 const stagger = {
   hidden: {},
@@ -131,7 +133,7 @@ function SeriesCard({ seriesInfo, seriesBooks, genreSlug, containerW, containerH
               {seriesInfo.name}
             </motion.h3>
             <p className="text-xs text-onyx/50 mb-1">
-              {seriesBooks.length} {seriesBooks.length === 1 ? 'book' : 'books'}
+              {bookCountLabel(seriesBooks.length)}
             </p>
             <span className="mt-auto pt-2 block text-xs py-2 px-3 bg-blood-red text-mint-cream text-center border border-transparent transition-colors group-hover:bg-blood-red/90">
               View series →
@@ -219,9 +221,15 @@ export default function BookGenre() {
             </div>
             {!loading && (
               <div className="md:flex-1 md:pt-3 md:flex md:justify-end">
-                <p className="text-body text-mint-cream/70 leading-relaxed md:text-right md:max-w-xl">
-                  {genre?.bio || 'No bio yet — add one in the admin.'}
-                </p>
+                {genre?.bio ? (
+                  <Markdown className="text-body text-mint-cream/70 leading-relaxed md:text-right md:max-w-xl">
+                    {genre.bio}
+                  </Markdown>
+                ) : (
+                  <p className="text-body text-mint-cream/70 leading-relaxed md:text-right md:max-w-xl">
+                    No bio yet — add one in the admin.
+                  </p>
+                )}
               </div>
             )}
           </div>

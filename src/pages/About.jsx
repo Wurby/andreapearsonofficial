@@ -5,6 +5,7 @@ import { useSeries } from '../hooks/useSeries'
 import { useGenres } from '../hooks/useGenres'
 import { SkeletonText } from '../components/Skeleton'
 import FadingImage from '../components/FadingImage'
+import Markdown from '../components/Markdown'
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -54,7 +55,7 @@ export default function About() {
             {loading ? (
               <SkeletonText lines={10} />
             ) : (
-              <p className="text-body text-onyx leading-relaxed">{content?.bioLong}</p>
+              <Markdown className="text-body text-onyx leading-relaxed">{content?.bioLong}</Markdown>
             )}
           </motion.div>
 
@@ -105,7 +106,7 @@ export default function About() {
             <p className="text-xs tracking-[0.3em] uppercase text-blood-red mb-6 font-medium">In Her Own Words</p>
             <div className="w-12 h-px bg-blood-red mx-auto mb-10" />
             <blockquote className="text-subtitle text-mint-cream leading-relaxed italic">
-              "{content.pullQuote}"
+              "<Markdown inline>{content.pullQuote}</Markdown>"
             </blockquote>
           </motion.div>
         </div>
