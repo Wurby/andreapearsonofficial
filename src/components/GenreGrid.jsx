@@ -92,7 +92,7 @@ function GenreCard({ genre, books }) {
         <h2 className="text-subtitle text-mint-cream mb-4 group-hover:text-blood-red transition-colors duration-200">
           {genre.name}
         </h2>
-        <p className="text-mint-cream/50 text-base mb-8">
+        <p className="text-mint-cream/70 text-base mb-8">
           {count} {count === 1 ? 'title' : 'titles'}
         </p>
         <span className="text-xs tracking-widest uppercase text-mint-cream/60 group-hover:text-blood-red transition-colors">

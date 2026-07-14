@@ -50,7 +50,7 @@ export default function Newsletter() {
               ))}
             </div>
           ) : newsletters.length === 0 ? (
-            <p className="text-gray-400 text-base">No newsletters configured yet.</p>
+            <p className="text-gray-600 text-base">No newsletters configured yet.</p>
           ) : (
             <div className="grid sm:grid-cols-3 gap-6">
               {newsletters.map((item, i) => {
@@ -87,7 +87,7 @@ export default function Newsletter() {
                         Subscribe
                       </Button>
                     ) : (
-                      <span className="text-center text-sm py-3 px-4 border border-mint-cream/20 text-mint-cream/40 tracking-wide">
+                      <span className="text-center text-sm py-3 px-4 border border-mint-cream/20 text-mint-cream/70 tracking-wide">
                         Coming soon
                       </span>
                     )}

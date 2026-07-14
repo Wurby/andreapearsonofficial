@@ -132,7 +132,7 @@ function SeriesCard({ seriesInfo, seriesBooks, genreSlug, containerW, containerH
             >
               {seriesInfo.name}
             </motion.h3>
-            <p className="text-xs text-onyx/50 mb-1">
+            <p className="text-xs text-onyx/60 mb-1">
               {bookCountLabel(seriesBooks.length)}
             </p>
             <span className="mt-auto pt-2 block text-xs py-2 px-3 bg-blood-red text-mint-cream text-center border border-transparent transition-colors group-hover:bg-blood-red/90">
@@ -342,7 +342,7 @@ export default function BookGenre() {
             )}
 
             {genreBooks.length === 0 && (
-              <p className="text-gray-400 text-base">No books yet.</p>
+              <p className="text-gray-600 text-base">No books yet.</p>
             )}
           </>
         )}

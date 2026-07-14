@@ -9,7 +9,7 @@ import { useSessionState } from '../../hooks/useSessionState'
 import ConfirmDialog from '../components/ConfirmDialog'
 
 const NO_SERIES = '__none__'
-const SELECT_CLASS = 'border rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-deep-space-blue hover:border-gray-400 transition-colors'
+const SELECT_CLASS = 'border rounded px-3 py-1.5 text-sm bg-white focus:outline-none focus:border-deep-space-blue focus-visible:ring-2 focus-visible:ring-deep-space-blue hover:border-gray-400 transition-colors'
 
 const SORT_COLUMNS = [
   { key: 'title',  label: 'Title' },
@@ -25,6 +25,7 @@ export default function AdminBooks() {
   const [filterGenre, setFilterGenre]     = useSessionState('adminBooks.filterGenre', '')
   const [filterSeries, setFilterSeries]   = useSessionState('adminBooks.filterSeries', '')
   const [filterFeatured, setFilterFeatured] = useSessionState('adminBooks.filterFeatured', false)
+  const [filterComingSoon, setFilterComingSoon] = useSessionState('adminBooks.filterComingSoon', false)
   const [sortKey, setSortKey] = useSessionState('adminBooks.sortKey', 'title')
   const [sortDir, setSortDir] = useSessionState('adminBooks.sortDir', 'asc')
   const [pendingDelete, setPendingDelete] = useState(null)
@@ -58,6 +59,7 @@ export default function AdminBooks() {
     .filter(b => !filterGenre   || b.genre === filterGenre)
     .filter(b => !filterSeries  || (filterSeries === NO_SERIES ? !b.series : b.series === filterSeries))
     .filter(b => !filterFeatured || b.featured)
+    .filter(b => !filterComingSoon || b.comingSoon)
     .sort((a, b) => {
       let av, bv
       switch (sortKey) {
@@ -103,9 +105,18 @@ export default function AdminBooks() {
           />
           Featured only
         </label>
-        {(filterGenre || filterSeries || filterFeatured) && (
+        <label className="flex items-center gap-2 text-sm text-onyx cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={filterComingSoon}
+            onChange={e => setFilterComingSoon(e.target.checked)}
+            className="w-4 h-4 accent-deep-space-blue"
+          />
+          Coming Soon only
+        </label>
+        {(filterGenre || filterSeries || filterFeatured || filterComingSoon) && (
           <button
-            onClick={() => { setFilterGenre(''); setFilterSeries(''); setFilterFeatured(false) }}
+            onClick={() => { setFilterGenre(''); setFilterSeries(''); setFilterFeatured(false); setFilterComingSoon(false) }}
             className="text-sm text-gray-400 hover:text-onyx px-2"
           >
             Clear
@@ -151,7 +162,14 @@ export default function AdminBooks() {
                       : <div className="w-8 h-12 bg-gray-100 rounded" />
                     }
                   </td>
-                  <td className="px-4 py-2 font-medium text-onyx">{book.title}</td>
+                  <td className="px-4 py-2 font-medium text-onyx">
+                    {book.title}
+                    {book.comingSoon && (
+                      <span className="ml-2 text-[10px] font-medium uppercase tracking-wide text-blood-red border border-blood-red/30 rounded px-1.5 py-0.5 align-middle">
+                        Soon
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-2 text-gray-500">{genreName(book.genre)}</td>
                   <td className="px-4 py-2 text-gray-500">{book.series ? seriesName(book.series) : '—'}</td>
                   <td className="px-4 py-2 text-gray-500 capitalize">{book.type}</td>

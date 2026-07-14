@@ -28,7 +28,7 @@ export default function AboutGenre() {
       >
         <Link
           to="/about"
-          className="text-base text-deep-space-blue/60 hover:text-blood-red transition-colors mb-10 inline-block"
+          className="text-base text-deep-space-blue/70 hover:text-blood-red transition-colors mb-10 inline-block"
         >
           ← Back to About
         </Link>
@@ -45,7 +45,7 @@ export default function AboutGenre() {
         ) : genre?.bio ? (
           <Markdown className="text-body text-onyx leading-relaxed">{genre.bio}</Markdown>
         ) : (
-          <p className="text-gray-400 italic text-lg">Bio coming soon.</p>
+          <p className="text-gray-600 italic text-lg">Bio coming soon.</p>
         )}
       </motion.div>
     </div>

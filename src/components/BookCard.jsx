@@ -13,7 +13,12 @@ export default function BookCard({ book, seriesLabel }) {
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
     >
-      <Link to={detailPath} className="aspect-[2/3] overflow-hidden mb-3 block">
+      <Link to={detailPath} className="relative aspect-[2/3] overflow-hidden mb-3 block">
+        {book.comingSoon && (
+          <span className="absolute bottom-0 left-0 right-0 z-10 bg-blood-red/80 text-mint-cream text-[10px] font-medium uppercase tracking-wide text-center py-1.5">
+            Coming Soon
+          </span>
+        )}
         {book.coverUrl ? (
           <FadingImage
             src={book.coverUrl}
@@ -23,7 +28,7 @@ export default function BookCard({ book, seriesLabel }) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-300 text-xs p-2 text-center">
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-600 text-xs p-2 text-center">
             No cover
           </div>
         )}
@@ -35,14 +40,14 @@ export default function BookCard({ book, seriesLabel }) {
             {book.title}
           </h3>
         </Link>
-        <span className="mt-auto pt-1 block text-xs text-gray-400 min-h-[1.25rem]">
+        <span className="mt-auto pt-1 block text-xs text-gray-600 min-h-[1.25rem]">
           {seriesLabel || TYPE_LABELS[book.type] || ''}
         </span>
       </div>
 
       {book.books2ReadLink ? (
         <Button href={book.books2ReadLink} size="sm" className="mt-3 w-full text-center">
-          Buy / Read
+          {book.comingSoon ? 'Pre-order' : 'Buy / Read'}
         </Button>
       ) : book.freeViaNewsletter ? (
         <Button

@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 export default function FadingImage({
   src,
-  alt,
+  alt = '',
   className = '',
   wrapperClassName = '',
   wrapperStyle,

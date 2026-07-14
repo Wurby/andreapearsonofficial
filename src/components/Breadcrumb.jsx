@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 export default function Breadcrumb({ items, dark = false }) {
-  const mutedCls  = dark ? 'text-mint-cream/50' : 'text-deep-space-blue/50'
+  const mutedCls  = dark ? 'text-mint-cream/70' : 'text-deep-space-blue/70'
   const sepCls    = dark ? 'text-mint-cream/25' : 'text-deep-space-blue/25'
   const activeCls = dark ? 'text-mint-cream/80' : 'text-deep-space-blue/80'
 

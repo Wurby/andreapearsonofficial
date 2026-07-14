@@ -182,7 +182,7 @@ export default function Home() {
             className="flex flex-col items-center gap-4 mb-8"
           >
             <img src="/logo.png" alt="Andrea Pearson" className="h-24 sm:h-48 w-auto" />
-            <p className="text-xs tracking-[0.3em] uppercase text-mint-cream/50">
+            <p className="text-xs tracking-[0.3em] uppercase text-mint-cream/70">
               andreapearsonofficial.com
             </p>
           </motion.div>
@@ -216,7 +216,7 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.6 }}
-          className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-mint-cream/30"
+          className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-mint-cream/60"
         >
           <span className="text-xs tracking-widest uppercase">Scroll</span>
           <span className="block w-px h-8 bg-mint-cream/20" />
@@ -236,7 +236,7 @@ export default function Home() {
               <h2 className="text-subtitle text-deep-space-blue">Featured Titles</h2>
               <Link
                 to="/books"
-                className="text-base text-deep-space-blue/60 hover:text-blood-red transition-colors tracking-wide hidden sm:block"
+                className="text-base text-deep-space-blue/70 hover:text-blood-red transition-colors tracking-wide hidden sm:block"
               >
                 View all →
               </Link>
@@ -266,7 +266,7 @@ export default function Home() {
           )}
 
           <div className="mt-10 sm:hidden">
-            <Link to="/books" className="text-base text-deep-space-blue/60 hover:text-blood-red transition-colors">
+            <Link to="/books" className="text-base text-deep-space-blue/70 hover:text-blood-red transition-colors">
               View all books →
             </Link>
           </div>
@@ -341,7 +341,7 @@ export default function Home() {
                 wrapperClassName="w-72 h-96"
               />
             ) : (
-              <div className="w-72 h-96 bg-gray-100 flex items-center justify-center text-gray-300 text-base">
+              <div className="w-72 h-96 bg-gray-100 flex items-center justify-center text-gray-600 text-base">
                 Headshot
               </div>
             )}

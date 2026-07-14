@@ -57,22 +57,31 @@ export default function BookDetail() {
   const bookMeta = (
     <>
       {seriesInfo && (
-        <p className="text-base text-deep-space-blue/50 mb-2 tracking-wide">
+        <p className="text-base text-deep-space-blue/70 mb-2 tracking-wide">
           {seriesInfo.name}{book.seriesOrder != null ? ` · #${book.seriesOrder}` : ''}
         </p>
       )}
       <h1 className="text-title text-deep-space-blue mb-4 leading-tight">{book.title}</h1>
 
-      {TYPE_LABELS[book.type] && (
-        <span className="inline-block text-xs text-deep-space-blue/50 border border-deep-space-blue/20 px-3 py-1 mb-8 tracking-wide">
-          {TYPE_LABELS[book.type]}
-        </span>
+      {(TYPE_LABELS[book.type] || book.comingSoon) && (
+        <div className="flex flex-wrap items-center gap-2 mb-8">
+          {TYPE_LABELS[book.type] && (
+            <span className="inline-block text-xs text-deep-space-blue/70 border border-deep-space-blue/20 px-3 py-1 tracking-wide">
+              {TYPE_LABELS[book.type]}
+            </span>
+          )}
+          {book.comingSoon && (
+            <span className="inline-block text-xs text-blood-red border border-blood-red/30 px-3 py-1 tracking-wide uppercase">
+              Coming {book.comingSoonDate || 'Soon'}
+            </span>
+          )}
+        </div>
       )}
 
       {book.description ? (
         <Markdown className="text-body text-onyx leading-relaxed mb-10">{book.description}</Markdown>
       ) : (
-        <p className="text-gray-400 italic mb-10 text-lg">No description available.</p>
+        <p className="text-gray-600 italic mb-10 text-lg">No description available.</p>
       )}
 
       {book.books2ReadLink ? (
@@ -84,7 +93,7 @@ export default function BookDetail() {
             genre: genreSlug,
           })}
         >
-          Buy / Read →
+          {book.comingSoon ? 'Pre-order →' : 'Buy / Read →'}
         </Button>
       ) : book.freeViaNewsletter ? (
         <Button
@@ -96,7 +105,7 @@ export default function BookDetail() {
           Get for free here →
         </Button>
       ) : (
-        <p className="text-base text-gray-400">Available to members of Andrea's Readers Group.</p>
+        <p className="text-base text-gray-600">Available to members of Andrea's Readers Group.</p>
       )}
     </>
   )
@@ -114,6 +123,11 @@ export default function BookDetail() {
           {book.seriesOrder != null && (
             <span className="absolute top-3 left-3 z-10 bg-blood-red text-mint-cream text-xs px-2 py-0.5 tracking-wide">
               Book {book.seriesOrder}
+            </span>
+          )}
+          {book.comingSoon && (
+            <span className="absolute top-3 right-3 z-10 bg-blood-red/80 text-mint-cream text-xs px-2 py-0.5 tracking-wide uppercase">
+              Coming Soon
             </span>
           )}
           {book.coverUrl ? (
@@ -150,6 +164,11 @@ export default function BookDetail() {
             {book.seriesOrder != null && (
               <span className="absolute -top-2 -left-2 z-10 bg-blood-red text-mint-cream text-xs px-2 py-0.5 tracking-wide">
                 Book {book.seriesOrder}
+              </span>
+            )}
+            {book.comingSoon && (
+              <span className="absolute -top-2 -right-2 z-10 bg-blood-red/80 text-mint-cream text-xs px-2 py-0.5 tracking-wide uppercase">
+                Coming Soon
               </span>
             )}
             {book.coverUrl ? (

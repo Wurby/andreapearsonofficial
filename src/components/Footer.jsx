@@ -35,7 +35,7 @@ export default function Footer() {
       </div>
 
       <div className="max-w-6xl mx-auto mt-8 pt-6 border-t border-mint-cream/10 flex items-center justify-between">
-        <p className="text-xs text-mint-cream/30">© {new Date().getFullYear()} Andrea Pearson. All rights reserved.</p>
+        <p className="text-xs text-mint-cream/50">© {new Date().getFullYear()} Andrea Pearson. All rights reserved.</p>
         <Link
           to="/admin"
           className="text-mint-cream/10 hover:text-mint-cream/30 transition-colors"

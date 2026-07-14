@@ -62,7 +62,7 @@ export default function SeriesDetail() {
             {loading ? '…' : seriesInfo?.name}
           </h1>
           {!loading && seriesBooks.length > 0 && (
-            <p className="text-mint-cream/50 text-base">
+            <p className="text-mint-cream/70 text-base">
               {bookCountLabel(seriesBooks.length)}
             </p>
           )}
@@ -99,7 +99,7 @@ export default function SeriesDetail() {
             ))}
           </motion.div>
         ) : (
-          <p className="text-gray-400 text-base">No books in this series yet.</p>
+          <p className="text-gray-600 text-base">No books in this series yet.</p>
         )}
       </div>
     </>

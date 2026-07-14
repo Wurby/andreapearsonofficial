@@ -24,6 +24,8 @@ const EMPTY_FORM = {
   description: '',
   coverUrl: '',
   featured: false,
+  comingSoon: false,
+  comingSoonDate: '',
 }
 
 export default function AdminBookForm() {
@@ -65,6 +67,8 @@ export default function AdminBookForm() {
         description:       d.description       ?? '',
         coverUrl:       d.coverUrl       ?? '',
         featured:       d.featured       ?? false,
+        comingSoon:     d.comingSoon     ?? false,
+        comingSoonDate: d.comingSoonDate ?? '',
       })
     })
   }, [id, isEdit])
@@ -131,6 +135,8 @@ export default function AdminBookForm() {
         newsletterLink:    form.newsletterLink.trim(),
         description:       form.description.trim(),
         featured:          form.featured,
+        comingSoon:        form.comingSoon,
+        comingSoonDate:    form.comingSoonDate.trim(),
       }
 
       let docRef
@@ -319,6 +325,35 @@ export default function AdminBookForm() {
                 className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
                 min="1"
                 placeholder="1"
+              />
+            </label>
+          )}
+        </div>
+
+        <div className="border rounded p-4 space-y-3">
+          <label className="flex items-start gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={form.comingSoon}
+              onChange={e => setField('comingSoon', e.target.checked)}
+              className="w-4 h-4 mt-0.5 accent-deep-space-blue"
+            />
+            <span className="text-sm font-medium text-onyx">
+              Coming Soon
+              <span className="block text-xs font-normal text-gray-400">
+                Shows a "Coming Soon" badge on the cover. Doesn't hide the Buy / Read link below — if one's set, its button relabels to "Pre-order" instead.
+              </span>
+            </span>
+          </label>
+          {form.comingSoon && (
+            <label className="block pl-7">
+              <span className="text-sm font-medium text-onyx">Release Timeframe</span>
+              <input
+                type="text"
+                value={form.comingSoonDate}
+                onChange={e => setField('comingSoonDate', e.target.value)}
+                className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
+                placeholder="e.g. Spring 2027 — leave blank to just show &quot;Coming Soon&quot;"
               />
             </label>
           )}

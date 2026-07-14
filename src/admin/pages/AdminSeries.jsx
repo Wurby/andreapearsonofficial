@@ -110,7 +110,7 @@ export default function AdminSeries() {
                         if (e.key === 'Enter') handleSaveEdit(s.id)
                         if (e.key === 'Escape') cancelEdit()
                       }}
-                      className="flex-1 border rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-deep-space-blue"
+                      className="flex-1 border rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-deep-space-blue focus-visible:ring-2 focus-visible:ring-deep-space-blue"
                       autoFocus
                     />
                     <div className="flex items-center gap-3 shrink-0">
@@ -188,7 +188,7 @@ export default function AdminSeries() {
                   value={newGenreName}
                   onChange={e => setNewGenreName(e.target.value)}
                   placeholder="Genre name"
-                  className="block w-full border rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-deep-space-blue"
+                  className="block w-full border rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-deep-space-blue focus-visible:ring-2 focus-visible:ring-deep-space-blue"
                   autoFocus
                 />
                 <button
@@ -204,7 +204,7 @@ export default function AdminSeries() {
               <select
                 value={newGenre}
                 onChange={e => setNewGenre(e.target.value)}
-                className="mt-1 block border rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-deep-space-blue hover:border-gray-400 transition-colors"
+                className="mt-1 block border rounded px-3 py-2 text-sm bg-white focus:outline-none focus:border-deep-space-blue focus-visible:ring-2 focus-visible:ring-deep-space-blue hover:border-gray-400 transition-colors"
               >
                 {genres.map(g => <option key={g.id} value={g.slug}>{g.name}</option>)}
               </select>

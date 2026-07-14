@@ -36,6 +36,13 @@ h1 { font-weight: 300; }
 h2 { font-weight: 400; }
 h3, h4, h5, h6 { font-weight: 500; }
 
+/* Consistent, on-brand keyboard focus indicator site-wide — only :focus-visible
+   (not :focus) so mouse clicks don't show a ring, matching modern UX norms. */
+:focus-visible {
+  outline: 2px solid var(--color-blood-red);
+  outline-offset: 2px;
+}
+
 @layer utilities {
   /* ── Type scale ──────────────────────────────── */
   /* Hero: homepage title only — one-off mega size */

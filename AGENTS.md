@@ -116,7 +116,8 @@ Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a sep
 
 ## Firestore Schema
 
-- `books/{id}` — title, genre, series, seriesOrder, type, coverUrl, description, books2ReadLink, freeViaNewsletter, newsletterLink, featured
+- `books/{id}` — title, genre, series, seriesOrder, type, coverUrl, description, books2ReadLink, freeViaNewsletter, newsletterLink, featured, comingSoon, comingSoonDate
+  - `comingSoon` (bool) + `comingSoonDate` (free-text timeframe, e.g. "Spring 2027", optional) — independent of `featured`, a book can be both. Renders a "Coming Soon" badge on `BookCard`/`BookDetail`; doesn't hide `books2ReadLink` (relabels its button to "Pre-order" instead of hiding it, since the link may be a legitimate pre-order URL).
 - `genres/{id}` — name, slug, bio, colors (per-genre theme override — same shape as `settings/theme`, `null` when using site defaults)
 - `series/{id}` — name, genreId
 - `types/{id}` — name (seeded from the original hardcoded 5 values; managed on the Genres admin page's Types column)
@@ -129,7 +130,7 @@ Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a sep
 
 ## Current Phase
 
-Design work is mostly complete (key gaps: logo asset awaiting Andrea, OG meta tags, footer polish). Admin Panel Polish, Work With Me Content Rebuild, Google Analytics, and the homepage Podcast Feature are all built — see `TODOS.md` for the numbered phase list and remaining work. Phase 1 there is just the Podcast Feature's visual sign-off; Phase 2 ("Coming Soon" Books) is next and not yet scoped.
+Design work is mostly complete (key gaps: logo asset awaiting Andrea — also needed as a proper OG share image, current one's a headshot stopgap — and footer polish). Admin Panel Polish, Work With Me Content Rebuild, Google Analytics, the homepage Podcast Feature, and "Coming Soon" Books are all built and verified — see `TODOS.md` for the numbered phase list and remaining work. Phase 1 there is Pre-Launch Polish, in progress (OG tags and an accessibility/contrast pass are done; cross-browser check still needs Joshua). A/B Testing is a post-launch deliverable (needs real production traffic), so it's scheduled after Delivery rather than before it.
 
 **Design decisions are locked** — see `design-doc.md` for the full specification. Update it whenever a design decision changes.
 

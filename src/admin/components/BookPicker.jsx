@@ -58,7 +58,7 @@ export default function BookPicker({ books, value, onChange, excludeIds = [], pl
           onFocus={() => setOpen(true)}
           onKeyDown={e => { if (e.key === 'Escape') { setOpen(false); setQuery(selected?.title ?? '') } }}
           placeholder={placeholder}
-          className="block w-full border rounded px-3 py-2 pr-7 text-sm bg-white focus:outline-none focus:border-deep-space-blue"
+          className="block w-full border rounded px-3 py-2 pr-7 text-sm bg-white focus:outline-none focus:border-deep-space-blue focus-visible:ring-2 focus-visible:ring-deep-space-blue"
         />
         {value && (
           <button

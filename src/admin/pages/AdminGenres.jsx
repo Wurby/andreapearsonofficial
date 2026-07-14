@@ -274,7 +274,7 @@ export default function AdminGenres() {
                       if (e.key === 'Enter') saveEditType(type.id)
                       if (e.key === 'Escape') cancelEditType()
                     }}
-                    className="flex-1 border rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-deep-space-blue"
+                    className="flex-1 border rounded px-2 py-1 text-sm bg-white focus:outline-none focus:border-deep-space-blue focus-visible:ring-2 focus-visible:ring-deep-space-blue"
                     autoFocus
                   />
                   <div className="flex items-center gap-3 shrink-0">

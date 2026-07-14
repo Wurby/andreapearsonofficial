@@ -54,7 +54,7 @@ export default function WorkWithMe() {
                   <div key={i} className="border-l-2 border-deep-space-blue/15 pl-8">
                     <h3 className="text-caption text-deep-space-blue mb-2">{c.name}</h3>
                     {c.tagline && (
-                      <p className="text-xs text-deep-space-blue/50 mb-6 tracking-widest uppercase">{c.tagline}</p>
+                      <p className="text-xs text-deep-space-blue/70 mb-6 tracking-widest uppercase">{c.tagline}</p>
                     )}
                     <div className="mb-8">
                       <Markdown className="text-body text-onyx leading-relaxed">{c.bio}</Markdown>
@@ -80,7 +80,7 @@ export default function WorkWithMe() {
             <h2 className="text-subtitle text-deep-space-blue mb-2">{doneForYou.heading || 'Done-for-You Services'}</h2>
             <div className="w-8 h-px bg-blood-red mt-3 mb-8" />
             {doneForYou.tag && (
-              <p className="text-xs font-medium text-deep-space-blue/50 mb-6 tracking-widest uppercase">{doneForYou.tag}</p>
+              <p className="text-xs font-medium text-deep-space-blue/70 mb-6 tracking-widest uppercase">{doneForYou.tag}</p>
             )}
             <div className="mb-8">
               <Markdown className="text-body text-onyx leading-relaxed">{doneForYou.body}</Markdown>
