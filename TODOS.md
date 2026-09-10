@@ -19,9 +19,21 @@
 
 ---
 
-## Phase 3 — A/B Testing
+## Phase 3 — Staging / Test Environment
 
-Post-launch deliverable — needs real production traffic to be meaningful, so it comes after Delivery rather than before it.
+Local Firebase emulators, not a second cloud project. `npm run dev` talks only to emulators; data persists in `.staging/`; `npm run scrub:staging` overwrites that dump from prod. Prod writes only happen via production builds / `npm run deploy`. Runbook: [STAGING.md](./STAGING.md).
+
+- [ ] Java + Firebase CLI available (Firestore emulator needs Java)
+- [ ] `npm run scrub:staging` clones prod Auth / Firestore / Storage into `.staging/`
+- [ ] `npm run dev` uses emulators (not prod). Admin login: cloned emails, password `staging`
+- [ ] Confirm an admin write does not appear on andreapearsonofficial.com
+- [ ] Confirm `npm run deploy` / `vite build` still target prod Firebase
+
+---
+
+## Phase 4 — A/B Testing
+
+Post-launch deliverable — needs real production traffic to be meaningful, so it comes after Delivery rather than before it. Do this against the staging env first.
 
 - [ ] Add Variant B fields to `AdminContent.jsx` for headline, intro, and hero CTA text
 - [ ] `useVariant` hook — assigns `'a'` or `'b'` randomly on first visit, persists to `localStorage`
@@ -32,7 +44,7 @@ Post-launch deliverable — needs real production traffic to be meaningful, so i
 
 ---
 
-## Phase 4 — Homepage Hero Cover Sizing
+## Phase 5 — Homepage Hero Cover Sizing
 
 Post-launch deliverable. Andrea wants to be able to resize the scattered hero book covers on the homepage herself, without needing a code change + redeploy each time (we hand-tuned these sizes/rotation/position several times by editing `SCATTER_DESKTOP`/`SCATTER_MOBILE` directly in `Home.jsx` during initial build — not sustainable for her long-term). Scope not yet decided — options:
 

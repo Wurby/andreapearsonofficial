@@ -10,17 +10,15 @@ Joshua tests and deploys. Agents implement, then stop. This overrides any genera
 
 ### Testing
 
-Do not browser-test, Playwright-walk, screenshot, or click through local or production to verify a change. Do not log into `/admin`. Do not start the dev server just to exercise the UI.
+Do not browser-test production. Do not log into prod `/admin`.
 
-After a code change, say what Joshua should check (pages, admin tabs, empty states). Leave the actual pass to him.
-
-Exception: he explicitly asks you to test, verify in the browser, or exercise a flow.
+Local staging is safe: `npm run dev` and `npm run scrub:staging` talk only to Firebase emulators (see [STAGING.md](./STAGING.md)). Do not run `npm run dev:prod` (that is Vite against live Firebase). After a code change, say what Joshua should check unless he asked you to exercise staging yourself.
 
 ### Deploys
 
-Do not run `firebase deploy`, `npm run deploy`, or any Hosting / Functions / Rules / Storage deploy. Do not publish to production.
+Do not run `firebase deploy`, `npm run deploy`, or any Hosting / Functions / Rules / Storage deploy. Do not publish to production. The only process allowed to change prod data is production (`npm run deploy` / a prod Hosting build / the live site).
 
-After a change that needs a ship, name the command (`npm run deploy` for hosting, `firebase deploy --only functions` for functions, `firebase deploy --only firestore:rules,storage` for rules) and stop.
+After a change that needs a ship, name the command (`npm run deploy` for hosting, `firebase deploy --only functions --project andreapearsonofficial` for functions, `firebase deploy --only firestore:rules,storage --project andreapearsonofficial` for rules) and stop.
 
 Exception: he explicitly asks you to deploy.
 
@@ -120,6 +118,7 @@ src/
                       useTheme, useIsMobile)
   lib/              — Firebase init (firebase.js) + analytics helper (analytics.js)
   index.css         — Tailwind @theme tokens + @layer utilities (type scale)
+scripts/            — `dev.mjs` (emulators + Vite), `scrub-staging.mjs` (clone prod → local .staging/)
 functions/          — Cloud Functions (own package.json, CommonJS, separate ESLint block —
                       see eslint.config.js). getSiteAnalytics queries the GA4 Data API for
                       the admin Dashboard's analytics charts; GA4_PROPERTY_ID lives in

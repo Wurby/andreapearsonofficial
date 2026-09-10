@@ -28,6 +28,10 @@ dist-ssr
 *.sln
 *.sw?
 serviceAccountKey.json
+serviceAccountKey.*.json
+
+# Local Firebase emulator dump (prod clone; never commit)
+.staging/
 
 # Firebase CLI local cache
 .firebase

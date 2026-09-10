@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
-import { getFunctions } from 'firebase/functions'
+import { getAuth, connectAuthEmulator } from 'firebase/auth'
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
+import { getStorage, connectStorageEmulator } from 'firebase/storage'
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -20,3 +20,16 @@ export const auth = getAuth(app)
 export const db = getFirestore(app)
 export const storage = getStorage(app)
 export const functions = getFunctions(app)
+
+// Only `npm run dev` (scripts/dev.mjs) sets VITE_USE_EMULATORS. Plain `vite`
+// / `npm run dev:prod` and production builds talk to real Firebase.
+if (import.meta.env.VITE_USE_EMULATORS === 'true' && !globalThis.__ANDREA_EMULATORS__) {
+  globalThis.__ANDREA_EMULATORS__ = true
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099')
+  connectFirestoreEmulator(db, '127.0.0.1', 8080)
+  connectStorageEmulator(storage, '127.0.0.1', 9199)
+  connectFunctionsEmulator(functions, '127.0.0.1', 5001)
+  console.info('Firebase emulators (staging) — prod is not in this process.')
+} else if (import.meta.env.DEV) {
+  console.warn('Vite is talking to PRODUCTION Firebase.')
+}
