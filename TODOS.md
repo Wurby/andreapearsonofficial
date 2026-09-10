@@ -12,11 +12,10 @@
 
 ## Phase 2 — Delivery
 
-- [ ] Tighten Firestore write rules to admin UID
-- [ ] Custom domain + SSL — add andreapearsonofficial.com in Firebase Hosting console
-- [ ] Transfer GA4 property + GCP project ownership from Joshua's Google account to Andrea's (currently both live under Joshua's account)
-- [ ] Final QA pass on production URL
-- [ ] Deliver credentials + admin URL to Andrea
+- [x] Tighten Firestore write rules to admin UID — both `firestore.rules` and `storage.rules` scoped writes from "any authenticated user" to Andrea's specific Auth UID (`ap@andreapearsonbooks.com`, the only account in the project). Deployed to production 2026-07-17
+- [x] Custom domain + SSL — add andreapearsonofficial.com in Firebase Hosting console
+- [x] Final QA pass on production URL
+- [x] Deliver credentials + admin URL to Andrea
 
 ---
 
@@ -30,3 +29,14 @@ Post-launch deliverable — needs real production traffic to be meaningful, so i
 - [ ] Log impression + key click events to Firestore (`ab_events/{id}` — variant, event, page, timestamp)
 - [ ] Admin analytics page — query `ab_events`, show variant A vs B table (impressions, CTA clicks, conversion rate)
 - [ ] Wire additional pages/CTAs as needed (newsletter signup, book page CTA)
+
+---
+
+## Phase 4 — Homepage Hero Cover Sizing
+
+Post-launch deliverable. Andrea wants to be able to resize the scattered hero book covers on the homepage herself, without needing a code change + redeploy each time (we hand-tuned these sizes/rotation/position several times by editing `SCATTER_DESKTOP`/`SCATTER_MOBILE` directly in `Home.jsx` during initial build — not sustainable for her long-term). Scope not yet decided — options:
+
+- A single size scale/slider per breakpoint (desktop, mobile) applied uniformly to all 3 covers — simpler admin UI, less granular control
+- Per-position sizing (3 desktop + 3 mobile, matching today's hardcoded array) — full control, more admin UI surface
+- Natural home for this: extend the existing "Homepage Hero Covers" section in `AdminContent.jsx` (already has the position 1/2/3 book pickers from the Coming Soon Books work) rather than a new admin section
+- Data model: likely new field(s) alongside `homepageHeroes` in `settings/content`, e.g. a scale/size value per slot or per breakpoint
