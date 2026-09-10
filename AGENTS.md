@@ -152,7 +152,7 @@ Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a sep
 
 ## Current Phase
 
-Design work is mostly complete (key gaps: logo asset awaiting Andrea — also needed as a proper OG share image, current one's a headshot stopgap — and footer polish). Admin Panel Polish, Work With Me Content Rebuild, Google Analytics, the homepage Podcast Feature, and "Coming Soon" Books are all built and verified — see `TODOS.md` for the numbered phase list and remaining work. Phase 1 there is Pre-Launch Polish, in progress (OG tags and an accessibility/contrast pass are done; cross-browser check still needs Joshua). A/B Testing is a post-launch deliverable (needs real production traffic), so it's scheduled after Delivery rather than before it.
+Design work is mostly complete (key gap: logo asset awaiting Andrea — also needed as a proper OG share image; current one's a headshot stopgap). Admin Panel Polish, Work With Me, Google Analytics, the homepage Podcast Feature, "Coming Soon" Books, and local staging emulators are built. Remaining work is in `TODOS.md`: logo/OG (waiting on Andrea), then A/B Testing and Homepage Hero Cover Sizing (both post-launch).
 
 **Design decisions are locked** — see `design-doc.md` for the full specification. Update it whenever a design decision changes.
 

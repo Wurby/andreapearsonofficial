@@ -65,9 +65,11 @@ export default function Home() {
 
   // Hero scatter covers — hand-picked and ordered by Andrea, independent of
   // the "Featured" flag used by the Featured Titles grid below.
+  // Sparse by slot index so Position 1/2/3 in admin stay put. Empty slots
+  // render nothing — no ghost placeholders if Andrea only picks one (or none).
   const heroBooks = useMemo(() => {
     const ids = content?.homepageHeroes ?? []
-    return ids.map(id => books.find(b => b.id === id)).filter(Boolean)
+    return ids.map(id => (id ? books.find(b => b.id === id) : null))
   }, [content, books])
 
   const seriesById = Object.fromEntries(series.map(s => [s.id, s]))
@@ -103,9 +105,10 @@ export default function Home() {
           <>
             {SCATTER_DESKTOP.map((cfg, i) => {
               const book = heroBooks[i]
+              if (!book?.coverUrl) return null
               return (
                 <motion.div
-                  key={`d-${book?.id ?? i}`}
+                  key={`d-${book.id}`}
                   className="absolute hidden lg:block"
                   style={{ top: cfg.top, left: cfg.left, right: cfg.right, width: cfg.w, zIndex: 2 }}
                   initial={{ opacity: 0, y: 28, rotate: cfg.rotate }}
@@ -113,63 +116,44 @@ export default function Home() {
                   transition={{ delay: cfg.delay, duration: 0.8, ease: 'easeOut' }}
                   whileHover={{ scale: 1.05, opacity: 1, transition: { duration: 0.2 } }}
                 >
-                  {book ? (
-                    <Link to={`/books/${book.genre}/${book.id}`} className="block">
-                      {book.coverUrl ? (
-                        <FadingImage
-                          src={book.coverUrl}
-                          alt={book.title}
-                          className="w-full block"
-                          wrapperClassName="w-full"
-                          shimmer="bg-white/10"
-                          style={{ aspectRatio: '2/3', objectFit: 'cover', boxShadow: '6px 12px 32px rgba(0,0,0,0.5)' }}
-                          loading="eager"
-                        />
-                      ) : (
-                        <div style={{ width: cfg.w, height: cfg.w * 1.5, boxShadow: '6px 12px 32px rgba(0,0,0,0.5)' }}
-                          className="bg-white/10 border border-white/10" />
-                      )}
-                    </Link>
-                  ) : (
-                    <div style={{ width: cfg.w, height: cfg.w * 1.5, boxShadow: '6px 12px 32px rgba(0,0,0,0.3)' }}
-                      className="bg-white/8 border border-white/10" />
-                  )}
+                  <Link to={`/books/${book.genre}/${book.id}`} className="block">
+                    <FadingImage
+                      src={book.coverUrl}
+                      alt={book.title}
+                      className="w-full block"
+                      wrapperClassName="w-full"
+                      shimmer="bg-white/10"
+                      style={{ aspectRatio: '2/3', objectFit: 'cover', boxShadow: '6px 12px 32px rgba(0,0,0,0.5)' }}
+                      loading="eager"
+                    />
+                  </Link>
                 </motion.div>
               )
             })}
 
             {SCATTER_MOBILE.map((cfg, i) => {
               const book = heroBooks[i]
+              if (!book?.coverUrl) return null
               return (
                 <motion.div
-                  key={`m-${book?.id ?? i}`}
+                  key={`m-${book.id}`}
                   className="absolute block lg:hidden"
                   style={{ top: cfg.top, left: cfg.left, right: cfg.right, width: cfg.w, zIndex: 2 }}
                   initial={{ opacity: 0, y: 20, rotate: cfg.rotate }}
                   animate={{ opacity: 0.7, y: 0, rotate: cfg.rotate }}
                   transition={{ delay: cfg.delay, duration: 0.8, ease: 'easeOut' }}
                 >
-                  {book ? (
-                    <Link to={`/books/${book.genre}/${book.id}`} className="block">
-                      {book.coverUrl ? (
-                        <FadingImage
-                          src={book.coverUrl}
-                          alt={book.title}
-                          className="w-full block"
-                          wrapperClassName="w-full"
-                          shimmer="bg-white/10"
-                          style={{ aspectRatio: '2/3', objectFit: 'cover', boxShadow: '4px 8px 24px rgba(0,0,0,0.5)' }}
-                          loading="eager"
-                        />
-                      ) : (
-                        <div style={{ width: cfg.w, height: cfg.w * 1.5 }}
-                          className="bg-white/10 border border-white/10" />
-                      )}
-                    </Link>
-                  ) : (
-                    <div style={{ width: cfg.w, height: cfg.w * 1.5 }}
-                      className="bg-white/8 border border-white/10" />
-                  )}
+                  <Link to={`/books/${book.genre}/${book.id}`} className="block">
+                    <FadingImage
+                      src={book.coverUrl}
+                      alt={book.title}
+                      className="w-full block"
+                      wrapperClassName="w-full"
+                      shimmer="bg-white/10"
+                      style={{ aspectRatio: '2/3', objectFit: 'cover', boxShadow: '4px 8px 24px rgba(0,0,0,0.5)' }}
+                      loading="eager"
+                    />
+                  </Link>
                 </motion.div>
               )
             })}
