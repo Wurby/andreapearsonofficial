@@ -10,7 +10,24 @@ const analyticsDataClient = new BetaAnalyticsDataClient()
 
 const ga4PropertyId = defineString('GA4_PROPERTY_ID')
 
-const VALID_DAYS = new Set([7, 30, 90])
+const VALID_DAY_COUNTS = new Set([7, 30, 90, 365])
+const LIFETIME_START = '2015-08-14'
+
+function yearToDateStart() {
+  return `${new Date().getUTCFullYear()}-01-01`
+}
+
+function analyticsRange(raw) {
+  if (raw === 'lifetime') {
+    return { days: 'lifetime', dateRange: { startDate: LIFETIME_START, endDate: 'today' } }
+  }
+  if (raw === 'ytd') {
+    return { days: 'ytd', dateRange: { startDate: yearToDateStart(), endDate: 'today' } }
+  }
+  const n = Number(raw)
+  const days = VALID_DAY_COUNTS.has(n) ? n : 30
+  return { days, dateRange: { startDate: `${days}daysAgo`, endDate: 'today' } }
+}
 
 function rowsOf(report) {
   return report.rows ?? []
@@ -40,8 +57,7 @@ exports.getSiteAnalytics = onCall(async request => {
     throw new HttpsError('unauthenticated', 'Sign in required.')
   }
 
-  const days = VALID_DAYS.has(request.data?.days) ? request.data.days : 30
-  const dateRange = { startDate: `${days}daysAgo`, endDate: 'today' }
+  const { days, dateRange } = analyticsRange(request.data?.days)
   const property = `properties/${ga4PropertyId.value()}`
 
   // batchRunReports caps out at 5 requests per call, and we have 6 reports —

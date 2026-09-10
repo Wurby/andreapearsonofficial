@@ -44,6 +44,7 @@ const EMPTY_CONSULTANT  = { name: '', tagline: '', bio: '', ctaLabel: 'Book a Se
 
 // The one site-wide contact email — see the Contact Email tab.
 const DEFAULT_CONTACT_EMAIL = 'ap@andreapearsonbooks.com'
+const DEFAULT_TAGLINE = 'Author · Speaker · Entrepreneur'
 
 // Current live copy — used to seed the admin form the first time it loads, so
 // saving the Work With Me tab before every field has been reviewed doesn't
@@ -122,6 +123,7 @@ const TABS = [
 
 const EMPTY_FORM = {
   headline:     '',
+  tagline:      DEFAULT_TAGLINE,
   intro:        '',
   bioShort:     '',
   bioLong:      '',
@@ -192,6 +194,7 @@ export default function AdminContent() {
       didInit.current = true
       setForm({
         headline:     content.headline     ?? '',
+        tagline:      content.tagline      ?? DEFAULT_TAGLINE,
         intro:        content.intro        ?? '',
         bioShort:     content.bioShort     ?? '',
         bioLong:      content.bioLong      ?? '',
@@ -365,6 +368,18 @@ export default function AdminContent() {
               onChange={e => setField('headline', e.target.value)}
               className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
             />
+          </label>
+          <label className="block">
+            <span className="text-sm font-medium text-onyx">Footer tagline</span>
+            <input
+              type="text"
+              value={form.tagline}
+              onChange={e => setField('tagline', e.target.value)}
+              className="mt-1 block w-full border rounded px-3 py-2 text-sm bg-white"
+            />
+            <p className="text-xs text-gray-400 mt-1">
+              Shown under Andrea's name in the site footer. Separate from the headline above.
+            </p>
           </label>
           <label className="block">
             <span className="text-sm font-medium text-onyx flex items-center gap-2">

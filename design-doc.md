@@ -87,6 +87,11 @@ No custom letter-spacing — browser defaults throughout.
 - Large Cormorant Garamond nav links centered, stagger in via Framer Motion
 - Close button top-right
 
+### Footer
+- Onyx background, site-wide
+- Name in Cormorant Garamond, then a CMS tagline from `content.tagline` (fallback `Author · Speaker · Entrepreneur`) — this is not the hero headline
+- Social links + nav links, copyright, hidden admin lock icon
+
 ---
 
 ## Home Page Structure
@@ -201,3 +206,4 @@ Pattern: **skeleton shimmer** (`animate-pulse`) across all pages.
 | Add `headshotUrl: string` to `settings/content` | Powers bio+headshot section on Home + About |
 | Admin: featured toggle in BookForm | Andrea controls which books appear on homepage |
 | Admin: headshotUrl field in Content editor | Admin can update headshot without code changes |
+| Add `tagline: string` to `settings/content` | Footer line under the name; edited on Content → Homepage, independent of hero headline |

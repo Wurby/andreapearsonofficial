@@ -4,6 +4,28 @@ Source of truth for project context, conventions, and patterns. Read this before
 
 ---
 
+## Agent workflow
+
+Joshua tests and deploys. Agents implement, then stop. This overrides any general “verify in the browser before you’re done” or “go ahead and ship it” instruction for this repo.
+
+### Testing
+
+Do not browser-test, Playwright-walk, screenshot, or click through local or production to verify a change. Do not log into `/admin`. Do not start the dev server just to exercise the UI.
+
+After a code change, say what Joshua should check (pages, admin tabs, empty states). Leave the actual pass to him.
+
+Exception: he explicitly asks you to test, verify in the browser, or exercise a flow.
+
+### Deploys
+
+Do not run `firebase deploy`, `npm run deploy`, or any Hosting / Functions / Rules / Storage deploy. Do not publish to production.
+
+After a change that needs a ship, name the command (`npm run deploy` for hosting, `firebase deploy --only functions` for functions, `firebase deploy --only firestore:rules,storage` for rules) and stop.
+
+Exception: he explicitly asks you to deploy.
+
+---
+
 ## Project
 
 Public author website for Andrea Pearson — YA fantasy, contemporary romance, and clean contemporary romance. Dual-purpose: fun and bookish for readers, professional for consulting (Work With Me). Site is live at andreapearsonofficial.com (Firebase Hosting).
@@ -110,7 +132,7 @@ functions/          — Cloud Functions (own package.json, CommonJS, separate ES
 
 GA4 tracking wired via `firebase/analytics`, gated behind `import.meta.env.PROD` (local dev never tracked) — see `src/lib/analytics.js`'s `trackEvent()` helper. Route-change pageviews handled by `PageViewTracker.jsx` (mounted in `Layout.jsx`, public routes only). Click events: `book_buy_click`, `newsletter_signup_click`, `work_with_me_cta_click`, `social_link_click`.
 
-Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a separate route) and reads from GA4 via the `getSiteAnalytics` Cloud Function rather than a parallel Firestore counter system — GA4 is the single source of truth, so numbers lag reality by a few hours (GA4 processing delay). Every report is "rank these categories by one metric" (nominal categorical, one series), so each renders as a horizontal ranked bar list (`BarList.jsx`) in one consistent hue with the value direct-labeled at the bar's tip — no legend, no multi-hue categorical palette in play.
+Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a separate route) and reads from GA4 via the `getSiteAnalytics` Cloud Function rather than a parallel Firestore counter system — GA4 is the single source of truth, so numbers lag reality by a few hours (GA4 processing delay). Range buttons: 7 / 30 / 90 / 365 days, Year to date (Jan 1 of the current UTC year → today), and Lifetime (`2015-08-14` → today; GA4 has no lifetime token). Every report is "rank these categories by one metric" (nominal categorical, one series), so each renders as a horizontal ranked bar list (`BarList.jsx`) in one consistent hue with the value direct-labeled at the bar's tip — no legend, no multi-hue categorical palette in play.
 
 ---
 
@@ -121,7 +143,8 @@ Admin-facing reporting lives on the Dashboard (`/admin`, merged in — not a sep
 - `genres/{id}` — name, slug, bio, colors (per-genre theme override — same shape as `settings/theme`, `null` when using site defaults)
 - `series/{id}` — name, genreId
 - `types/{id}` — name (seeded from the original hardcoded 5 values; managed on the Genres admin page's Types column)
-- `settings/content` — headline, intro, bioShort, bioLong, headshotUrl, pullQuote, newsletters, homepageHeroes, podcast, workWithMe, socialLinks, contactEmail
+- `settings/content` — headline, tagline, intro, bioShort, bioLong, headshotUrl, pullQuote, newsletters, homepageHeroes, podcast, workWithMe, socialLinks, contactEmail
+  - `tagline` — footer line under the name (e.g. "Author · Speaker · Entrepreneur"). Edited on the Content page's Homepage tab; separate from `headline` (hero H1). Empty/missing falls back to "Author · Speaker · Entrepreneur".
   - `homepageHeroes` — fixed-length-3 array of book IDs (`''` for an empty slot), index = hero position. Controls which covers scatter behind the `Home.jsx` hero headline and in what order — independent of the `featured` flag on `books/{id}` (which drives the separate Featured Titles grid). Edited on the Content page's Homepage tab; a book can only occupy one slot, picking it into a new one clears the old one.
   - `podcast` — `{ eyebrow, heading, body, spotify: {enabled, url}, youtube: {enabled, url}, applePodcasts: {enabled, url} }`. Homepage section (above "About Andrea") renders one real embed per enabled platform — see `src/lib/podcastEmbeds.js` for how each platform's public URL gets turned into an iframe src (Spotify show embed, YouTube "uploads" playlist embed, Apple Podcasts embed). Section hides itself entirely if no platform is enabled/resolves.
 - `settings/theme` — deepSpaceBlue, regalNavy, mintCream, onyx, bloodRed (site-wide color defaults, editable on the Theme admin page)

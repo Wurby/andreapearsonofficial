@@ -6,7 +6,14 @@ import { useGenres } from '../../hooks/useGenres'
 import { useSeries } from '../../hooks/useSeries'
 import BarList from '../components/BarList'
 
-const DAY_OPTIONS = [7, 30, 90]
+const RANGE_OPTIONS = [
+  { value: 7,          label: '7 days' },
+  { value: 30,         label: '30 days' },
+  { value: 90,         label: '90 days' },
+  { value: 365,        label: '365 days' },
+  { value: 'ytd',      label: 'Year to date' },
+  { value: 'lifetime', label: 'Lifetime' },
+]
 
 export default function AdminDashboard() {
   const { books }  = useBooks()
@@ -53,20 +60,20 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
         <h2 className="text-lg font-semibold text-deep-space-blue">Site Analytics</h2>
-        <div className="flex gap-1 bg-white border rounded p-1">
-          {DAY_OPTIONS.map(d => (
+        <div className="flex flex-wrap gap-1 bg-white border rounded p-1">
+          {RANGE_OPTIONS.map(({ value, label }) => (
             <button
-              key={d}
-              onClick={() => setDays(d)}
+              key={value}
+              onClick={() => setDays(value)}
               className={`px-3 py-1.5 text-sm rounded transition-colors ${
-                days === d
+                days === value
                   ? 'bg-deep-space-blue text-mint-cream'
                   : 'text-gray-500 hover:text-onyx'
               }`}
             >
-              {d} days
+              {label}
             </button>
           ))}
         </div>

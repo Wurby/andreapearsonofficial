@@ -11,7 +11,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex flex-col items-center md:items-start">
           <p className="font-display text-2xl font-medium text-mint-cream mb-1">Andrea Pearson</p>
-          <p className="text-sm text-mint-cream/50 mb-3">Author · Speaker · Strategist</p>
+          <p className="text-sm text-mint-cream/50 mb-3">{content?.tagline || 'Author · Speaker · Entrepreneur'}</p>
           <SocialLinks links={content?.socialLinks} className="text-mint-cream/50" />
         </div>
 
