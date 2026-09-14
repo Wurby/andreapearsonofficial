@@ -96,7 +96,7 @@ No custom letter-spacing — browser defaults throughout.
 
 ## Home Page Structure
 
-1. **Full-bleed hero** — `min-h-screen`, Deep Space Blue background
+1. **Full-bleed hero** — Deep Space Blue background, short of the viewport so the next section peeks (`min-h-[calc(100svh-4rem)]`, `md:min-h-[calc(100svh-6rem)]`). No labeled “Scroll” cue — the cut-off Featured Titles eyebrow is the scroll signifier (avoids a false floor). Homepage section padding is half the previous scale (`md:pt-14` / `md:pb-8` / `md:py-14`) so the peek lands on the eyebrow instead of empty mint.
    - Wordmark top-left in nav; hero text centered
    - Hero headline (`text-hero`) from Firestore `content.headline`
    - Sub-text (`text-body`) from Firestore `content.intro`
@@ -104,7 +104,6 @@ No custom letter-spacing — browser defaults throughout.
    - Scattered book covers: 3 canted covers on desktop (top-left, middle-right, bottom-left), 3 smaller peeking covers on mobile (top-left, middle-right, bottom-left corners)
    - Top scrim (`h-36` gradient) protects nav readability over book covers
    - Radial haze behind central text: tighter on desktop (45% ellipse, 0.48 opacity), wider + stronger on mobile (80% ellipse, 0.72 opacity)
-   - Scroll indicator at bottom
 
 2. **Bio + headshot section** — Mint Cream bg
    - Split layout: bio text (left) + headshot (right) on desktop; stacked on mobile

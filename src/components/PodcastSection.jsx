@@ -25,14 +25,21 @@ export default function PodcastSection() {
       key: 'youtube', label: 'YouTube', src: youtubeEmbedSrc(podcast.youtube.url), aspectVideo: true,
     },
     podcast?.applePodcasts?.enabled && {
-      key: 'apple', label: 'Apple Podcasts', src: applePodcastsEmbedSrc(podcast.applePodcasts.url), height: 450, sandbox: APPLE_SANDBOX,
+      key: 'apple',
+      label: 'Apple Podcasts',
+      src: applePodcastsEmbedSrc(podcast.applePodcasts.url),
+      height: 450,
+      sandbox: APPLE_SANDBOX,
+      // Apple paints its own card and tops out at 660px (their official
+      // embed). A full-width rounded+shadow iframe left a larger empty outline.
+      nativeChrome: true,
     },
   ].filter(e => e && e.src)
 
   if (!podcast || embeds.length === 0) return null
 
   return (
-    <section className="bg-mint-cream py-14 md:py-28 px-6">
+    <section className="bg-mint-cream py-7 md:py-14 px-6">
       <div className="max-w-4xl mx-auto">
         <motion.div
           variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}
@@ -41,13 +48,13 @@ export default function PodcastSection() {
           <div className="w-12 h-px bg-blood-red mb-6" />
           <h2 className="text-subtitle text-deep-space-blue mb-4">{podcast.heading}</h2>
           {podcast.body && (
-            <Markdown className="text-body text-deep-space-blue/70 leading-relaxed mb-10 max-w-2xl">
+            <Markdown className="text-body text-deep-space-blue/70 leading-relaxed mb-5 max-w-2xl">
               {podcast.body}
             </Markdown>
           )}
         </motion.div>
 
-        <div className="space-y-8">
+        <div className="space-y-8 max-w-[660px] mx-auto">
           {embeds.map((embed, i) => (
             <motion.div
               key={embed.key}
@@ -76,7 +83,7 @@ export default function PodcastSection() {
                   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                   {...(embed.sandbox && { sandbox: embed.sandbox })}
                   loading="lazy"
-                  className="rounded-xl shadow-sm"
+                  className={embed.nativeChrome ? 'overflow-hidden' : 'rounded-xl shadow-sm'}
                 />
               )}
             </motion.div>

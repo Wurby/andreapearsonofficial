@@ -84,7 +84,10 @@ export default function Home() {
   return (
     <>
       {/* ── Hero ────────────────────────────────────────────────── */}
-      <section className="min-h-screen bg-deep-space-blue flex flex-col items-center justify-center text-mint-cream px-6 relative overflow-hidden">
+      {/* Short of 100svh so Featured Titles peeks above the fold (cut-off
+          "Books" eyebrow + blood-red rule). min-h, not h, so short windows
+          can still grow with the copy instead of clipping the CTAs. */}
+      <section className="min-h-[calc(100svh-4rem)] md:min-h-[calc(100svh-6rem)] bg-deep-space-blue flex flex-col items-center justify-center text-mint-cream px-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 bg-[radial-gradient(ellipse_at_top_right,_#F1F9F7_0%,_transparent_60%)]" />
 
         {/* Scrim — fades book covers behind the nav zone without moving them */}
@@ -195,24 +198,14 @@ export default function Home() {
             <Button variant="ghost" href={PODCAST_URL}>The Show</Button>
           </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-          className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-mint-cream/60"
-        >
-          <span className="text-xs tracking-widest uppercase">Scroll</span>
-          <span className="block w-px h-8 bg-mint-cream/20" />
-        </motion.div>
       </section>
 
       {/* ── Featured Books ──────────────────────────────────────── */}
-      <section className="bg-mint-cream pt-14 md:pt-28 pb-10 md:pb-16 px-6">
+      <section className="bg-mint-cream pt-7 md:pt-14 pb-5 md:pb-8 px-6">
         <div className="max-w-6xl mx-auto">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}
-            className="mb-14"
+            className="mb-7"
           >
             <p className="text-xs tracking-[0.2em] uppercase text-blood-red mb-4 font-medium">Books</p>
             <div className="w-12 h-px bg-blood-red mb-6" />
@@ -249,7 +242,7 @@ export default function Home() {
             <p className="text-gray-400 text-base">No featured books yet — mark books as featured in the admin panel.</p>
           )}
 
-          <div className="mt-10 sm:hidden">
+          <div className="mt-5 sm:hidden">
             <Link to="/books" className="text-base text-deep-space-blue/70 hover:text-blood-red transition-colors">
               View all books →
             </Link>
@@ -258,11 +251,11 @@ export default function Home() {
       </section>
 
       {/* ── Browse by Genre ─────────────────────────────────────── */}
-      <section className="bg-mint-cream pt-10 md:pt-16 px-6 overflow-x-hidden">
+      <section className="bg-mint-cream pt-5 md:pt-8 px-6 overflow-x-hidden">
         <div className="max-w-6xl mx-auto">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}
-            className="mb-14"
+            className="mb-7"
           >
             <p className="text-xs tracking-[0.2em] uppercase text-blood-red mb-4 font-medium">Explore</p>
             <div className="w-12 h-px bg-blood-red mb-6" />
@@ -287,7 +280,7 @@ export default function Home() {
       <PodcastSection />
 
       {/* ── About the Author ────────────────────────────────────── */}
-      <section className="bg-onyx py-14 md:py-28 px-6">
+      <section className="bg-onyx py-7 md:py-14 px-6">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <motion.div
             variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-60px' }}
