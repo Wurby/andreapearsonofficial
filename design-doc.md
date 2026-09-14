@@ -96,7 +96,7 @@ No custom letter-spacing — browser defaults throughout.
 
 ## Home Page Structure
 
-1. **Full-bleed hero** — Deep Space Blue background, short of the viewport so the next section peeks (`min-h-[calc(100svh-4rem)]`, `md:min-h-[calc(100svh-6rem)]`). No labeled “Scroll” cue — the cut-off Featured Titles eyebrow is the scroll signifier (avoids a false floor). Homepage section padding is half the previous scale (`md:pt-14` / `md:pb-8` / `md:py-14`) so the peek lands on the eyebrow instead of empty mint.
+1. **Full-bleed hero** — Deep Space Blue background, short of the viewport so the next section peeks (`min-h-[calc(100svh-4rem)]`, `md:min-h-[calc(100svh-6rem)]`). Bottom padding (`pb-8 md:pb-10`) keeps navy under the CTAs when a short window hugs the hero to its content. No labeled “Scroll” cue — the cut-off Featured Titles eyebrow is the scroll signifier (avoids a false floor). Homepage section padding is half the previous scale (`md:pt-14` / `md:pb-8` / `md:py-14`) so the peek lands on the eyebrow instead of empty mint.
    - Wordmark top-left in nav; hero text centered
    - Hero headline (`text-hero`) from Firestore `content.headline`
    - Sub-text (`text-body`) from Firestore `content.intro`

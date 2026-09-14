@@ -87,7 +87,7 @@ export default function Home() {
       {/* Short of 100svh so Featured Titles peeks above the fold (cut-off
           "Books" eyebrow + blood-red rule). min-h, not h, so short windows
           can still grow with the copy instead of clipping the CTAs. */}
-      <section className="min-h-[calc(100svh-4rem)] md:min-h-[calc(100svh-6rem)] bg-deep-space-blue flex flex-col items-center justify-center text-mint-cream px-6 relative overflow-hidden">
+      <section className="min-h-[calc(100svh-4rem)] md:min-h-[calc(100svh-6rem)] bg-deep-space-blue flex flex-col items-center justify-center text-mint-cream px-6 pb-8 md:pb-10 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5 bg-[radial-gradient(ellipse_at_top_right,_#F1F9F7_0%,_transparent_60%)]" />
 
         {/* Scrim — fades book covers behind the nav zone without moving them */}
@@ -192,7 +192,7 @@ export default function Home() {
 
           <motion.div
             variants={fadeUp} initial="hidden" animate="visible" custom={3}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-8 justify-center"
           >
             <Button to="/books">Explore Books</Button>
             <Button variant="ghost" href={PODCAST_URL}>The Show</Button>
